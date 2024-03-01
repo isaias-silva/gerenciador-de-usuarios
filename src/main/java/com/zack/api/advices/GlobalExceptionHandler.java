@@ -7,8 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.zack.api.util.responses.Response;
-import com.zack.api.util.responses.ResponseErrorValidator;
+import com.zack.api.util.responses.bodies.Response;
+import com.zack.api.util.responses.bodies.ResponseErrorValidator;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

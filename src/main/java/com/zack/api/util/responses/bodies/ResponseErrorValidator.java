@@ -1,4 +1,4 @@
-package com.zack.api.util.responses;
+package com.zack.api.util.responses.bodies;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -5,8 +5,9 @@ import com.zack.api.dtos.UserLoginDto;
 import com.zack.api.models.UserModel;
 import com.zack.api.repositories.UserRepository;
 import com.zack.api.util.crypt.Hash;
-import com.zack.api.util.responses.Response;
-import com.zack.api.util.responses.ResponseJwt;
+import com.zack.api.util.responses.bodies.Response;
+import com.zack.api.util.responses.bodies.ResponseJwt;
+import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import javax.security.auth.login.AccountNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.zack.api.util.responses.enums.GlobalResponses.USER_ALREADY_EXISTS;
+
 @Service("userService")
 public class UserServices implements UserDetailsService {
     @Autowired
@@ -36,7 +39,7 @@ public class UserServices implements UserDetailsService {
         UserModel exists = userRepository.findOneByUsernameOrEmail(userDoc.name(), userDoc.mail());
 
         if (exists != null) {
-            throw new BadRequestException("usuário já existe");
+            throw new BadRequestException(USER_ALREADY_EXISTS.getText());
         }
 
         var userModel = new UserModel();
@@ -45,22 +48,22 @@ public class UserServices implements UserDetailsService {
 
         ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
 
-        return new Response("usuário cadastrado com sucesso!");
+        return new Response(GlobalResponses.USER_REGISTERED.getText());
     }
 
     public Response loginUser(UserLoginDto userDoc) throws AccountNotFoundException, BadRequestException {
         var userdata = userRepository.findOneByEmail(userDoc.mail());
         if (userdata == null) {
-            throw new AccountNotFoundException("usuário não encontrado");
+            throw new AccountNotFoundException((GlobalResponses.USER_NOT_FOUND.getText()));
         }
-        var correctpass = new Hash().compareHash(userDoc.password(), userdata.getPassword());
 
-        if (!correctpass) {
-            throw new BadRequestException("senha incorreta");
+
+        if (!(new Hash().compareHash(userDoc.password(), userdata.getPassword()))) {
+            throw new BadRequestException((GlobalResponses.USER_INCORRECT_PASSWORD.getText()));
         } else {
             String token = tokenService.generateToken(userdata);
 
-            return new ResponseJwt("logado com sucesso", token);
+            return new ResponseJwt(GlobalResponses.USER_LOGGED.getText(), token);
         }
 
     }
@@ -79,7 +82,7 @@ public class UserServices implements UserDetailsService {
 
             return formatUserData;
         } else {
-            throw new AccountNotFoundException("usuário não encontrado");
+            throw new AccountNotFoundException((GlobalResponses.USER_NOT_FOUND.getText()));
         }
 
     }

@@ -20,8 +20,6 @@ public class UserController {
     @Autowired
     UserServices userServices;
 
-    @Autowired
-    AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid UserCreateDto userCreateRecordDto) throws BadRequestException {
