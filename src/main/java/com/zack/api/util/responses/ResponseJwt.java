@@ -1,17 +1,19 @@
-package util;
+package com.zack.api.util.responses;
 
 public class ResponseJwt extends Response {
 
-   private String token;
+    private String token;
+
     public ResponseJwt(String message, String token) {
         super(message);
-        this.token=token;
+        this.token = token;
     }
 
     public String getToken() {
         return token;
     }
+
     public void setToken() {
-        this.token= token;
+        this.token = token;
     }
 }

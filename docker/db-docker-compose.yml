@@ -10,11 +10,11 @@ services:
     volumes:
       - ./database:/var/lib/mysql
     ports:
-      - 3307:3306
+      - "3307:3306"
   phpmyadmin:
     image: phpmyadmin
     ports:
-      - 8000:80
+      - "8000:80"
     environment:
       - PMA_ARBITRARY=1
 
