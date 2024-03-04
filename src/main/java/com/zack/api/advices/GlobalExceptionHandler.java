@@ -25,7 +25,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(responseErrorValidator);
     }
 
-    @ExceptionHandler(ChangeSetPersister.NotFoundException.class)
+
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<Response> handleNotFoundExceptions() {
         Response responseErrorValidator=new Response("endpoint não encontrado.");

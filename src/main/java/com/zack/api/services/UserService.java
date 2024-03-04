@@ -27,7 +27,7 @@ import java.util.Map;
 import static com.zack.api.util.responses.enums.GlobalResponses.USER_ALREADY_EXISTS;
 
 @Service("userService")
-public class UserServices implements UserDetailsService {
+public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 

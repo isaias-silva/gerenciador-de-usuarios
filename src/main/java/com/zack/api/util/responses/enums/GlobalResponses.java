@@ -6,8 +6,9 @@ public enum GlobalResponses {
     USER_REGISTERED("usuário cadastrado com sucesso!"),
 
     USER_INCORRECT_PASSWORD("senha incorreta"),
-    USER_LOGGED("usuário logado com sucesso");
+    USER_LOGGED("usuário logado com sucesso"),
 
+    INVALID_TOKEN("token inválido");
 
     private String text;
 

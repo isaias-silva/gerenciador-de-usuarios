@@ -3,22 +3,21 @@ package com.zack.api.controllers;
 
 import com.zack.api.dtos.UserCreateDto;
 import com.zack.api.dtos.UserLoginDto;
-import com.zack.api.services.UserServices;
+import com.zack.api.services.UserService;
 import jakarta.validation.Valid;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountNotFoundException;
 
-@RestController()
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
     @Autowired
-    UserServices userServices;
+    UserService userServices;
 
 
     @PostMapping("/register")
