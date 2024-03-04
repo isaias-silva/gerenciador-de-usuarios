@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class TokenService {
@@ -25,7 +26,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("auth")
-                    .withSubject(user.getMail())
+                    .withSubject(user.getId().toString())
                     .withExpiresAt(expiresAt)
                     .sign(algorithm);
 
@@ -36,13 +37,15 @@ public class TokenService {
         }
     }
 
-    public String isValidToken(String token) {
+    public UUID isValidToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
 
         try {
-            return JWT.require(algorithm).withIssuer("auth")
+            String idSubject= JWT.require(algorithm).withIssuer("auth")
                     .build()
                     .verify(token).getSubject();
+
+            return UUID.fromString(idSubject);
 
         } catch (JWTVerificationException e) {
 

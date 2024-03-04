@@ -1,11 +1,12 @@
 package com.zack.api.util.exceptions;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.FORBIDDEN)
-public class ForbiddenException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+public class ForbiddenException extends ResponseStatusException {
     public ForbiddenException(String message){
-        super(message);
+        super(HttpStatus.FORBIDDEN, message);
+
     }
 }

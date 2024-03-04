@@ -2,11 +2,12 @@ package com.zack.api.services;
 
 import com.zack.api.dtos.UserCreateDto;
 import com.zack.api.dtos.UserLoginDto;
+import com.zack.api.dtos.UserUpdateDto;
 import com.zack.api.models.UserModel;
 import com.zack.api.repositories.UserRepository;
-import com.zack.api.util.crypt.Hash;
-import com.zack.api.util.enums.TypeUpdateUser;
+import com.zack.api.components.crypt.Hash;
 import com.zack.api.util.exceptions.ForbiddenException;
+import com.zack.api.util.exceptions.NotFoundException;
 import com.zack.api.util.responses.bodies.Response;
 import com.zack.api.util.responses.bodies.ResponseJwt;
 import com.zack.api.util.responses.enums.GlobalResponses;
@@ -21,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,8 @@ public class UserService implements UserDetailsService {
     @Autowired
     TokenService tokenService;
 
+    @Autowired
+    private Hash hash;
 
     public Response registerUser(UserCreateDto userDoc) throws BadRequestException {
         UserModel exists = userRepository.findOneByUsernameOrEmail(userDoc.name(), userDoc.mail());
@@ -46,7 +48,7 @@ public class UserService implements UserDetailsService {
 
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDoc, userModel);
-        userModel.setPassword(new Hash().generateHash(userModel.getPassword()));
+        userModel.setPassword(hash.generateHash(userModel.getPassword()));
 
         ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
 
@@ -56,11 +58,11 @@ public class UserService implements UserDetailsService {
     public Response loginUser(UserLoginDto userDoc) throws AccountNotFoundException, BadRequestException {
         var userdata = userRepository.findOneByEmail(userDoc.mail());
         if (userdata == null) {
-            throw new AccountNotFoundException((GlobalResponses.USER_NOT_FOUND.getText()));
+            throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
         }
 
 
-        if (!(new Hash().compareHash(userDoc.password(), userdata.getPassword()))) {
+        if (!(hash.compareHash(userDoc.password(), userdata.getPassword()))) {
             throw new BadRequestException((GlobalResponses.USER_INCORRECT_PASSWORD.getText()));
         } else {
             String token = tokenService.generateToken(userdata);
@@ -85,26 +87,26 @@ public class UserService implements UserDetailsService {
 
             return formatUserData;
         } else {
-            throw new AccountNotFoundException((GlobalResponses.USER_NOT_FOUND.getText()));
+            throw new NotFoundException((GlobalResponses.USER_NOT_FOUND.getText()));
         }
 
     }
 
 
-    public Response updateUser(TypeUpdateUser typeUpdateUser, String data) throws BadRequestException {
+    public Response updateUser(UserUpdateDto data) throws BadRequestException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
 
             UserModel user = (UserModel) authentication.getPrincipal();
 
-            switch (typeUpdateUser){
-                case NAME -> userRepository.updateUserNameById(data,user.getId());
-                case EMAIL -> userRepository.updateUserMailById(data,user.getId());
-                case RESUME -> userRepository.updateUserResumeById(data,user.getId());
 
-                default-> throw new BadRequestException("tipo de alteração inválido");
-            }
+            if(data.name()!=null) user.setName(data.name());
+            if(data.mail()!=null) user.setMail(data.mail());
+            if(data.resume()!=null) user.setResume(data.resume().toString());
+
+            userRepository.save(user);
+
             return new Response("dados atualizados!");
 
         }else{

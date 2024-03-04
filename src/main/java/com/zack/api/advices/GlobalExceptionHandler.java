@@ -1,6 +1,5 @@
 package com.zack.api.advices;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -26,14 +25,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(responseErrorValidator);
     }
 
-
-
-
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<Response> handleNotFoundExceptions() {
-        Response responseErrorValidator=new Response("endpoint não encontrado.");
-
-        return ResponseEntity.status(404).body(responseErrorValidator);
-    }
 }

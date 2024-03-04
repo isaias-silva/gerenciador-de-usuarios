@@ -34,3 +34,5 @@ build/
 
 ## volumes
 docker/database
+
+public/files/!*.html
