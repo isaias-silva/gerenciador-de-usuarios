@@ -23,7 +23,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     TokenService tokenService;
-
     @Autowired
     UserRepository userRepository;
 
