@@ -5,6 +5,8 @@ import com.zack.api.dtos.UserLoginDto;
 import com.zack.api.models.UserModel;
 import com.zack.api.repositories.UserRepository;
 import com.zack.api.util.crypt.Hash;
+import com.zack.api.util.enums.TypeUpdateUser;
+import com.zack.api.util.exceptions.ForbiddenException;
 import com.zack.api.util.responses.bodies.Response;
 import com.zack.api.util.responses.bodies.ResponseJwt;
 import com.zack.api.util.responses.enums.GlobalResponses;
@@ -74,6 +76,7 @@ public class UserService implements UserDetailsService {
         if (authentication != null && authentication.isAuthenticated()) {
 
             UserModel user = (UserModel) authentication.getPrincipal();
+
             Map<String, String> formatUserData = new HashMap<>();
             formatUserData.put("name", user.getName());
             formatUserData.put("mail", user.getMail());
@@ -87,8 +90,32 @@ public class UserService implements UserDetailsService {
 
     }
 
+
+    public Response updateUser(TypeUpdateUser typeUpdateUser, String data) throws BadRequestException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+
+            UserModel user = (UserModel) authentication.getPrincipal();
+
+            switch (typeUpdateUser){
+                case NAME -> userRepository.updateUserNameById(data,user.getId());
+                case EMAIL -> userRepository.updateUserMailById(data,user.getId());
+                case RESUME -> userRepository.updateUserResumeById(data,user.getId());
+
+                default-> throw new BadRequestException("tipo de alteração inválido");
+            }
+            return new Response("dados atualizados!");
+
+        }else{
+            throw new ForbiddenException("não autorizado.");
+        }
+
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findOneByUsername(username);
     }
+
 }

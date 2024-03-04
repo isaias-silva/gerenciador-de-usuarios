@@ -5,7 +5,6 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zack.api.models.UserModel;
-import com.zack.api.util.exceptions.ForbiddenException;
 import com.zack.api.util.responses.enums.GlobalResponses;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -47,7 +46,7 @@ public class TokenService {
 
         } catch (JWTVerificationException e) {
 
-            throw new ForbiddenException(GlobalResponses.INVALID_TOKEN.getText());
+            throw new RuntimeException(GlobalResponses.INVALID_TOKEN.getText());
 
         }
     }

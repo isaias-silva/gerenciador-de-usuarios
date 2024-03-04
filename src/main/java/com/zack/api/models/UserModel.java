@@ -110,4 +110,8 @@ public class UserModel implements Serializable, UserDetails {
     public void setResume(String resume) {
         this.resume = resume;
     }
+
+    public UserRole getRole() {
+        return role;
+    }
 }
