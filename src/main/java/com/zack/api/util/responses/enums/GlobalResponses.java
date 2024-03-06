@@ -11,7 +11,10 @@ public enum GlobalResponses {
     USER_UPDATED_PROFILE("perfil atualizado!"),
     ONLY_IMAGES("apenas imagens são permitidas."),
 
-    INVALID_TOKEN("token inválido!");
+    INVALID_TOKEN("token inválido!"),
+    INVALID_CODE("código inválido"),
+    MAIL_ALREADY_VALIDATED("e-mail já validado"),
+    MAIL_VALIDATED("e-mail validado com sucesso.");
     private final String text;
     GlobalResponses(String text) {
         this.text = text;

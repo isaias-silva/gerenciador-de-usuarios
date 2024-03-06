@@ -4,6 +4,7 @@ package com.zack.api.controllers;
 import com.zack.api.dtos.UserCreateDto;
 import com.zack.api.dtos.UserLoginDto;
 import com.zack.api.dtos.UserUpdateDto;
+import com.zack.api.dtos.ValidateCodeDto;
 import com.zack.api.services.UploadService;
 import com.zack.api.services.UserService;
 import jakarta.validation.Valid;
@@ -40,6 +41,11 @@ public class UserController {
         return ResponseEntity.ok().body(this.userServices.getMe());
     }
 
+    @PutMapping("/validate")
+    public ResponseEntity<Object> validateMail(@RequestBody @Valid ValidateCodeDto body) throws AccountNotFoundException, BadRequestException {
+        return ResponseEntity.ok().body(this.userServices.validateMail(body.code()));
+    }
+
     @PutMapping("/update")
     public ResponseEntity<Object> update(@RequestBody @Valid UserUpdateDto userUpdateDto) throws AccountNotFoundException, BadRequestException {
         return ResponseEntity.ok().body(this.userServices.updateUser(userUpdateDto));
@@ -51,4 +57,5 @@ public class UserController {
         return ResponseEntity.ok().body(uploadService.generateFileProfileInServer(file.getInputStream(),file.getOriginalFilename()));
 
     }
+
 }

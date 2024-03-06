@@ -26,7 +26,8 @@ public class SecurityCofigurations {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable).sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ).authorizeHttpRequests(auth ->
-                auth.requestMatchers(HttpMethod.PUT, "/user/**").hasRole("USER")
+                auth.requestMatchers(HttpMethod.PUT, "/user/update/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/user/validate").hasRole("VERIFY_MAIL")
                         .requestMatchers(HttpMethod.GET, "/user/**").hasRole("VERIFY_MAIL")
                         .anyRequest().permitAll()
         ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
