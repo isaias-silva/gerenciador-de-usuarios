@@ -1,11 +1,14 @@
 package com.zack.api.services;
 
+import com.zack.api.components.crypt.Hash;
+import com.zack.api.dtos.EmailSendDto;
 import com.zack.api.dtos.UserCreateDto;
 import com.zack.api.dtos.UserLoginDto;
 import com.zack.api.dtos.UserUpdateDto;
+import com.zack.api.infra.queue.producers.UserProducer;
 import com.zack.api.models.UserModel;
 import com.zack.api.repositories.UserRepository;
-import com.zack.api.components.crypt.Hash;
+import com.zack.api.roles.UserRole;
 import com.zack.api.util.exceptions.ForbiddenException;
 import com.zack.api.util.exceptions.NotFoundException;
 import com.zack.api.util.responses.bodies.Response;
@@ -22,6 +25,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,19 +40,23 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     TokenService tokenService;
-
     @Autowired
     private Hash hash;
 
+    @Autowired
+    UserProducer userProducer;
+
+    @Transactional
     public Response registerUser(UserCreateDto userDoc) throws BadRequestException {
         UserModel exists = userRepository.findOneByUsernameOrEmail(userDoc.name(), userDoc.mail());
-
         if (exists != null) {
             throw new BadRequestException(USER_ALREADY_EXISTS.getText());
         }
 
+        sendMailRegisterForQueue(userDoc.mail(),userDoc.name());
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDoc, userModel);
+        userModel.setRole(UserRole.USER);
         userModel.setPassword(hash.generateHash(userModel.getPassword()));
 
         ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
@@ -84,6 +93,7 @@ public class UserService implements UserDetailsService {
             formatUserData.put("mail", user.getMail());
             formatUserData.put("profile", user.getProfile());
             formatUserData.put("resume", user.getResume());
+            formatUserData.put("role",user.getRole().name());
 
             return formatUserData;
         } else {
@@ -100,21 +110,28 @@ public class UserService implements UserDetailsService {
 
             UserModel user = (UserModel) authentication.getPrincipal();
 
+            if (data.name() != null) user.setName(data.name());
+            if (data.mail() != null) user.setMail(data.mail());
+            if (data.resume() != null) user.setResume(data.resume().toString());
 
-            if(data.name()!=null) user.setName(data.name());
-            if(data.mail()!=null) user.setMail(data.mail());
-            if(data.resume()!=null) user.setResume(data.resume().toString());
 
             userRepository.save(user);
 
             return new Response("dados atualizados!");
 
-        }else{
+        } else {
             throw new ForbiddenException("não autorizado.");
         }
 
     }
 
+    private void sendMailRegisterForQueue(String mail,String name){
+        EmailSendDto emailSendDto=new EmailSendDto(mail,
+                "bem vindo!",
+                "olá "+name+" seja bem vindo a nossa plataforma.");
+
+        userProducer.publishMessageMail(emailSendDto);
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findOneByUsername(username);

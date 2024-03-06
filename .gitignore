@@ -33,6 +33,8 @@ build/
 .vscode/
 
 ## volumes
-docker/database
+/database
+/rabbitmq
 
 public/files/!*.html
+*.env

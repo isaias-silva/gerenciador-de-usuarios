@@ -1,0 +1,45 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql:8.0.31
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASS}
+      MYSQL_DATABASE: ${MYSQL_DATA}
+    volumes:
+      - ./database:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - MediaCodec
+
+  phpmyadmin:
+    image: phpmyadmin
+    ports:
+      - "8000:80"
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - MediaCodec
+
+  rabbitmq:
+    image: rabbitmq:management
+    restart: always
+
+    ports:
+      - '5673:5672'
+      - '15673:15672'
+    volumes:
+      - ./rabbitmq:/var/lib/rabbitmq
+
+    environment:
+      RABBITMQ_DEFAULT_USER: ${MQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${MQ_PASS}
+    networks:
+      - MediaCodec
+
+networks:
+
+  MediaCodec:
+    driver: bridge

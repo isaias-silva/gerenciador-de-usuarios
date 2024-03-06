@@ -22,9 +22,10 @@ public class UserController {
 
     @Autowired
     UserService userServices;
-
     @Autowired
     UploadService uploadService;
+
+
 
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid UserCreateDto userCreateRecordDto) throws BadRequestException {
@@ -38,19 +39,18 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<Object> getMe() throws AccountNotFoundException, BadRequestException {
-
         return ResponseEntity.ok().body(this.userServices.getMe());
     }
+
     @PutMapping("/update")
     public ResponseEntity<Object> update(@RequestBody @Valid UserUpdateDto userUpdateDto) throws AccountNotFoundException, BadRequestException {
-
         return ResponseEntity.ok().body(this.userServices.updateUser(userUpdateDto));
     }
 
     @PutMapping("/update/profile")
-    public ResponseEntity<Object> updateProfile( @RequestParam("file") MultipartFile file) throws  IOException {
+    public ResponseEntity<Object> updateProfile( @RequestParam("file") MultipartFile file) throws IOException {
 
-        uploadService.generateFileProfileInServer(file.getInputStream(),file.getOriginalFilename());
-        return ResponseEntity.ok().body("file ok");
+        return ResponseEntity.ok().body(uploadService.generateFileProfileInServer(file.getInputStream(),file.getOriginalFilename()));
+
     }
 }

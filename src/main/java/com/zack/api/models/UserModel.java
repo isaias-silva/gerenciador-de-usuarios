@@ -114,4 +114,7 @@ public class UserModel implements Serializable, UserDetails {
     public UserRole getRole() {
         return role;
     }
+    public void setRole(UserRole role){
+        this.role=role;
+    }
 }

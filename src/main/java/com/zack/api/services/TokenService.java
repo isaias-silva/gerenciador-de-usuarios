@@ -21,7 +21,7 @@ public class TokenService {
     public String generateToken(UserModel user) {
         try {
             Date issuedAt = new Date();
-            Date expiresAt = new Date(issuedAt.getTime() + 24 * 60 * 60 * 1000); // 1 dia de validade
+            Date expiresAt = new Date(issuedAt.getTime() + 24 * 60 * 60 * 1000);
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
