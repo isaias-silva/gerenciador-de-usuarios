@@ -153,15 +153,14 @@ public class UserService implements UserDetailsService {
                 throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
             }
 
-
         } else {
             throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
         }
     }
 
-
     private void sendMailRegisterForQueue(String mail, String name) throws IOException {
         String random= generateRandom.randomCode(mail);
+
         EmailSendDto emailSendDto = new EmailSendDto(
                 mail,
                 "bem vindo!",
