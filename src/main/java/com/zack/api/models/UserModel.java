@@ -35,7 +35,8 @@ public class UserModel implements Serializable, UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == UserRole.ADMIN)
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        else if(this.role==UserRole.USER) return List.of(new SimpleGrantedAuthority("ROLE_USER"),new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+        else return List.of(new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
     }
 
     public String getPassword() {

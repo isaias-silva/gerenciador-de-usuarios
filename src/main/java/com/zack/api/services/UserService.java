@@ -1,6 +1,7 @@
 package com.zack.api.services;
 
 import com.zack.api.components.crypt.Hash;
+import com.zack.api.components.files.MailHtmlGenerator;
 import com.zack.api.dtos.EmailSendDto;
 import com.zack.api.dtos.UserCreateDto;
 import com.zack.api.dtos.UserLoginDto;
@@ -28,8 +29,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.security.auth.login.AccountNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.zack.api.util.responses.enums.GlobalResponses.USER_ALREADY_EXISTS;
 
@@ -37,26 +40,28 @@ import static com.zack.api.util.responses.enums.GlobalResponses.USER_ALREADY_EXI
 public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     TokenService tokenService;
-    @Autowired
-    private Hash hash;
 
     @Autowired
     UserProducer userProducer;
+    @Autowired
+    Hash hash;
+
+    @Autowired
+    MailHtmlGenerator mailHtmlGenerator;
 
     @Transactional
-    public Response registerUser(UserCreateDto userDoc) throws BadRequestException {
+    public Response registerUser(UserCreateDto userDoc) throws IOException {
         UserModel exists = userRepository.findOneByUsernameOrEmail(userDoc.name(), userDoc.mail());
         if (exists != null) {
             throw new BadRequestException(USER_ALREADY_EXISTS.getText());
         }
 
-        sendMailRegisterForQueue(userDoc.mail(),userDoc.name());
+        sendMailRegisterForQueue(userDoc.mail(), userDoc.name());
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDoc, userModel);
-        userModel.setRole(UserRole.USER);
+        userModel.setRole(UserRole.VERIFY_MAIL);
         userModel.setPassword(hash.generateHash(userModel.getPassword()));
 
         ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
@@ -93,7 +98,7 @@ public class UserService implements UserDetailsService {
             formatUserData.put("mail", user.getMail());
             formatUserData.put("profile", user.getProfile());
             formatUserData.put("resume", user.getResume());
-            formatUserData.put("role",user.getRole().name());
+            formatUserData.put("role", user.getRole().name());
 
             return formatUserData;
         } else {
@@ -114,24 +119,26 @@ public class UserService implements UserDetailsService {
             if (data.mail() != null) user.setMail(data.mail());
             if (data.resume() != null) user.setResume(data.resume().toString());
 
-
             userRepository.save(user);
-
-            return new Response("dados atualizados!");
-
+            return new Response(GlobalResponses.USER_UPDATED.getText());
         } else {
-            throw new ForbiddenException("não autorizado.");
+            throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
         }
-
     }
 
-    private void sendMailRegisterForQueue(String mail,String name){
-        EmailSendDto emailSendDto=new EmailSendDto(mail,
+    private void sendMailRegisterForQueue(String mail, String name) throws IOException {
+        EmailSendDto emailSendDto = new EmailSendDto(
+                mail,
                 "bem vindo!",
-                "olá "+name+" seja bem vindo a nossa plataforma.");
+                mailHtmlGenerator.generatorMailFile(
+                        "default.verify",
+                        name,
+                        "seja bem vindo a plataforma, para validar seu e-mail use o código:",
+                        Optional.of("12394")));
 
         userProducer.publishMessageMail(emailSendDto);
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findOneByUsername(username);

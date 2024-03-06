@@ -25,10 +25,8 @@ public class UserController {
     @Autowired
     UploadService uploadService;
 
-
-
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody @Valid UserCreateDto userCreateRecordDto) throws BadRequestException {
+    public ResponseEntity<Object> register(@RequestBody @Valid UserCreateDto userCreateRecordDto) throws IOException {
         return ResponseEntity.status(201).body(this.userServices.registerUser(userCreateRecordDto));
     }
 

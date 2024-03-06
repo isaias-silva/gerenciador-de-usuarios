@@ -1,10 +1,14 @@
 package com.zack.api.services;
 
 
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMailMessage;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,21 +21,22 @@ public class EmailService {
     @Value(value="${spring.mail.username}")
     private String emailFrom;
 
-    public void sendMail(String text,
+    public void sendMail(StringBuilder body,
                          String subject,
                          String to){
        try {
-           SimpleMailMessage message = new SimpleMailMessage();
-           message.setSubject(subject);
-           message.setTo(to);
-           message.setFrom(emailFrom);
-           message.setText(text);
+           MimeMessage mimeMessage = mailSender.createMimeMessage();
+           MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-           mailSender.send(message);
+           helper.setFrom(emailFrom);
+           helper.setTo(to);
+           helper.setSubject(subject);
+           helper.setText(body.toString(),true);
 
-       }catch(MailException err){
+           mailSender.send(mimeMessage);
 
-           throw new RuntimeException(err);
+       } catch (MessagingException e) {
+           throw new RuntimeException(e);
        }
     }
 }

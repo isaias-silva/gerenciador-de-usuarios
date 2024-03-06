@@ -33,7 +33,7 @@ public class TokenService {
         }
         catch (JWTCreationException e) {
 
-            throw new RuntimeException("erro ao gerar token", e);
+            throw new RuntimeException(GlobalResponses.INVALID_TOKEN.getText(), e);
         }
     }
 
