@@ -2,7 +2,7 @@ package com.zack.api.services;
 
 import com.zack.api.components.crypt.Hash;
 import com.zack.api.components.files.MailHtmlGenerator;
-import com.zack.api.components.utils.GenerateRandom;
+import com.zack.api.components.utils.CacheUtils;
 import com.zack.api.dtos.EmailSendDto;
 import com.zack.api.dtos.UserCreateDto;
 import com.zack.api.dtos.UserLoginDto;
@@ -19,7 +19,6 @@ import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -50,7 +49,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     Hash hash;
     @Autowired
-    GenerateRandom generateRandom;
+    CacheUtils cacheUtils;
     @Autowired
     MailHtmlGenerator mailHtmlGenerator;
 
@@ -63,7 +62,11 @@ public class UserService implements UserDetailsService {
             throw new BadRequestException(USER_ALREADY_EXISTS.getText());
         }
 
-        sendMailRegisterForQueue(userDoc.mail(), userDoc.name());
+        sendMailForQueue(userDoc.mail(),
+                userDoc.name(),
+                "bem vindo",
+                "seja bem vindo a MediaCodec! para válidar o email da sua conta use o código: ",
+                Optional.of(cacheUtils.randomCode(userDoc.mail())));
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDoc, userModel);
         userModel.setRole(UserRole.VERIFY_MAIL);
@@ -142,40 +145,56 @@ public class UserService implements UserDetailsService {
                 throw new BadRequestException(GlobalResponses.MAIL_VALIDATED.getText());
             }
 
-            String cacheCode=generateRandom.getCodeFromCache(user.getMail());
+            String cacheCode=cacheUtils.getCodeFromCache(user.getMail());
             if(Objects.equals(cacheCode, code)){
                 user.setRole(UserRole.USER);
                 userRepository.save(user);
-                generateRandom.clearCache(user.getMail());
+                cacheUtils.clearCache(user.getMail());
 
                 return new Response(GlobalResponses.MAIL_VALIDATED.getText());
             }else{
                 throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
             }
-
         } else {
             throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
         }
     }
+    public Response sendNewCode(String code) throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    private void sendMailRegisterForQueue(String mail, String name) throws IOException {
-        String random= generateRandom.randomCode(mail);
+        if (authentication != null && authentication.isAuthenticated()) {
+            UserModel user = (UserModel) authentication.getPrincipal();
+            cacheUtils.clearCache(user.getMail());
 
-        EmailSendDto emailSendDto = new EmailSendDto(
-                mail,
-                "bem vindo!",
-                mailHtmlGenerator.generatorMailFile(
-                        "default.verify",
-                        name,
-                        "seja bem vindo a plataforma, para validar seu e-mail use o código:",
-                        Optional.of(random)));
+           String newCode = cacheUtils.getCodeFromCache(user.getMail());
 
+           sendMailForQueue(user.getMail(),
+                   user.getName(),
+                   "código de verificação",
+                   "um novo código de verificação foi solicitado, use o código abaixo para validar seu e-mail:",
+                   Optional.of(newCode)
+                   );
 
-
-        userProducer.publishMessageMail(emailSendDto);
+           return new Response(GlobalResponses.NEW_CODE_SEND.getText());
+        }else {
+            throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
+        }
     }
 
-
+    private void sendMailForQueue(String userMail,
+                                  String userName,
+                                  String subjectMail,
+                                  String textMail,
+                                  Optional<String> random) throws IOException {
+        EmailSendDto emailSendDto = new EmailSendDto(
+                userMail,
+                subjectMail,
+                mailHtmlGenerator.generatorMailFile(
+                        userName,
+                        textMail,
+                        random));
+        userProducer.publishMessageMail(emailSendDto);
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findOneByUsername(username);

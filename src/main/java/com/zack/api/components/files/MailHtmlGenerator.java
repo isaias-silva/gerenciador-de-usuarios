@@ -23,11 +23,11 @@ public class MailHtmlGenerator {
 
     }
 
-    public String generatorMailFile(String fileName, String name, String text, Optional<String> code) throws IOException {
+    public String generatorMailFile(String name, String text, Optional<String> code) throws IOException {
 
         StringBuilder content= new StringBuilder();
 
-        Path pathMailFile = path.resolve(fileName + ".html");
+        Path pathMailFile = path.resolve(code.isPresent()?"default.verify":"default.message"+ ".html");
         File file = new File(pathMailFile.toString());
         FileReader fileReader = new FileReader(file);
 

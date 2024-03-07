@@ -12,7 +12,8 @@ public enum GlobalResponses {
     ONLY_IMAGES("apenas imagens são permitidas."),
 
     INVALID_TOKEN("token inválido!"),
-    INVALID_CODE("código inválido"),
+    INVALID_CODE("código inválido."),
+    NEW_CODE_SEND("um novo código foi enviado para seu e-mail."),
     MAIL_ALREADY_VALIDATED("e-mail já validado"),
     MAIL_VALIDATED("e-mail validado com sucesso.");
     private final String text;

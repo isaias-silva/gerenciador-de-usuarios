@@ -8,7 +8,7 @@ import java.util.Random;
 
 
 @Component
-public class GenerateRandom {
+public class CacheUtils {
    @Cacheable(value = "code",key = "#userMail")
     public String randomCode(String userMail){
        int length = 7;
@@ -28,4 +28,11 @@ public class GenerateRandom {
 
     @CacheEvict(value = "code", key = "#userMail")
     public void clearCache(String userMail) {}
+
+
+    @Cacheable(value="newMail",key="#userMail")
+
+    public void setNewMail(String newMail,String userMail){
+
+    }
 }
