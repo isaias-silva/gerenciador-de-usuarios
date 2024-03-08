@@ -48,6 +48,5 @@ services:
       - MediaCodec
 
 networks:
-
   MediaCodec:
     driver: bridge

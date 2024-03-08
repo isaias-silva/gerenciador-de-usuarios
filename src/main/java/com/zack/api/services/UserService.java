@@ -117,68 +117,116 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public Response updateUser(UserUpdateDto data) throws BadRequestException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public Response updateUser(UserUpdateDto data) throws IOException {
 
-        if (authentication != null && authentication.isAuthenticated()) {
 
-            UserModel user = (UserModel) authentication.getPrincipal();
+        UserModel user = getAuth();
 
-            if (data.name() != null) user.setName(data.name());
-            if (data.mail() != null) user.setMail(data.mail());
-            if (data.resume() != null) user.setResume(data.resume().toString());
+        if (data.name() != null) user.setName(data.name());
+        if (data.resume() != null) user.setResume(data.resume().toString());
 
-            userRepository.save(user);
+        userRepository.save(user);
 
+        if (data.mail() != null) {
+            return changeMail(data.mail(), user);
+
+        } else {
             return new Response(GlobalResponses.USER_UPDATED.getText());
+        }
+    }
+
+    public Response validateMail(String code) throws IOException {
+
+        UserModel user = getAuth();
+        if (user.getRole() != UserRole.VERIFY_MAIL) {
+            throw new BadRequestException(GlobalResponses.MAIL_VALIDATED.getText());
+        }
+
+        String cacheCode = cacheUtils.getCodeFromCache(user.getMail());
+        if (Objects.equals(cacheCode, code)) {
+            user.setRole(UserRole.USER);
+            userRepository.save(user);
+            cacheUtils.clearCacheRandom(user.getMail());
+
+            sendMailForQueue(user.getMail(),
+                    user.getName(),
+                    "email validado!",
+                    "olá seu endereço de email foi validado com sucesso! aproveite a plataforma!",
+                    Optional.empty());
+            return new Response(GlobalResponses.MAIL_VALIDATED.getText());
+        } else {
+            throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
+        }
+
+    }
+
+    public Response sendNewCode() throws IOException {
+
+        UserModel user = getAuth();
+        cacheUtils.clearCacheRandom(user.getMail());
+
+        String newCode = cacheUtils.getCodeFromCache(user.getMail());
+
+        sendMailForQueue(user.getMail(),
+                user.getName(),
+                "código de verificação",
+                "um novo código de verificação foi solicitado, use o código abaixo para validar seu e-mail:",
+                Optional.of(newCode)
+        );
+
+        return new Response(GlobalResponses.NEW_CODE_SEND.getText());
+
+    }
+
+    public Response confirmNewMail(String code) {
+        UserModel user = getAuth();
+        String userId = user.getId().toString();
+
+        String cacheCode = cacheUtils.getCodeFromCache(user.getMail());
+        if (Objects.equals(cacheCode, code)) {
+            String newMail = cacheUtils.getNewMail(userId);
+            user.setMail(newMail);
+            userRepository.save(user);
+            cacheUtils.clearCacheRandom(user.getMail());
+            cacheUtils.clearCacheNewMail(userId);
+
+            return new Response(GlobalResponses.USER_EMAIL_CHANGED.getText());
+        } else {
+            throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
+
+        }
+    }
+
+    private UserModel getAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return (UserModel) authentication.getPrincipal();
         } else {
             throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
         }
     }
 
-    public Response validateMail(String code) throws BadRequestException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.isAuthenticated()) {
-            UserModel user = (UserModel) authentication.getPrincipal();
-            if(user.getRole()!=UserRole.VERIFY_MAIL){
-                throw new BadRequestException(GlobalResponses.MAIL_VALIDATED.getText());
-            }
+    private Response changeMail(String newMail, UserModel userModel) throws IOException {
+        String oldMail = userModel.getMail();
+        String userId = userModel.getId().toString();
 
-            String cacheCode=cacheUtils.getCodeFromCache(user.getMail());
-            if(Objects.equals(cacheCode, code)){
-                user.setRole(UserRole.USER);
-                userRepository.save(user);
-                cacheUtils.clearCache(user.getMail());
+        cacheUtils.clearCacheNewMail(userId);
 
-                return new Response(GlobalResponses.MAIL_VALIDATED.getText());
-            }else{
-                throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
-            }
-        } else {
-            throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
-        }
-    }
-    public Response sendNewCode(String code) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        cacheUtils.setNewMail(newMail, userId);
 
-        if (authentication != null && authentication.isAuthenticated()) {
-            UserModel user = (UserModel) authentication.getPrincipal();
-            cacheUtils.clearCache(user.getMail());
+        cacheUtils.clearCacheRandom(oldMail);
 
-           String newCode = cacheUtils.getCodeFromCache(user.getMail());
+        String newCode = cacheUtils.randomCode(oldMail);
 
-           sendMailForQueue(user.getMail(),
-                   user.getName(),
-                   "código de verificação",
-                   "um novo código de verificação foi solicitado, use o código abaixo para validar seu e-mail:",
-                   Optional.of(newCode)
-                   );
+        sendMailForQueue(newMail,
+                userModel.getName(),
+                "troca de e-mail",
+                "foi solicitada a troca de e-mail da sua conta para esse e-mail, use o código abaixo para confirmar a troca (se não foi você desconsidere)",
+                Optional.of(newCode));
 
-           return new Response(GlobalResponses.NEW_CODE_SEND.getText());
-        }else {
-            throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
-        }
+        return new Response(GlobalResponses.MAIL_CHANGE_INIT.getText());
     }
 
     private void sendMailForQueue(String userMail,
@@ -195,6 +243,7 @@ public class UserService implements UserDetailsService {
                         random));
         userProducer.publishMessageMail(emailSendDto);
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findOneByUsername(username);

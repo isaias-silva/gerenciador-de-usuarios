@@ -41,13 +41,26 @@ public class UserController {
         return ResponseEntity.ok().body(this.userServices.getMe());
     }
 
+    @GetMapping("/send/newCodeValidator")
+    public ResponseEntity<Object> sendNewCode() throws AccountNotFoundException, IOException {
+
+        return ResponseEntity.ok().body(this.userServices.sendNewCode());
+
+    }
+
+    @PutMapping("/update/confirm/mail")
+    public ResponseEntity<Object> confirmNewMail(@RequestBody @Valid ValidateCodeDto body) throws AccountNotFoundException, IOException {
+        return ResponseEntity.ok().body(this.userServices.confirmNewMail(body.code()));
+    }
+
     @PutMapping("/validate")
-    public ResponseEntity<Object> validateMail(@RequestBody @Valid ValidateCodeDto body) throws AccountNotFoundException, BadRequestException {
+    public ResponseEntity<Object> validateMail(@RequestBody @Valid ValidateCodeDto body) throws AccountNotFoundException, IOException {
         return ResponseEntity.ok().body(this.userServices.validateMail(body.code()));
     }
 
+
     @PutMapping("/update")
-    public ResponseEntity<Object> update(@RequestBody @Valid UserUpdateDto userUpdateDto) throws AccountNotFoundException, BadRequestException {
+    public ResponseEntity<Object> update(@RequestBody @Valid UserUpdateDto userUpdateDto) throws AccountNotFoundException, IOException {
         return ResponseEntity.ok().body(this.userServices.updateUser(userUpdateDto));
     }
 

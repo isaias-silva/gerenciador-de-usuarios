@@ -6,11 +6,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Random;
 
-
 @Component
 public class CacheUtils {
-   @Cacheable(value = "code",key = "#userMail")
-    public String randomCode(String userMail){
+   @Cacheable(value = "code", key = "#userMail")
+    public String randomCode(String userMail) {
        int length = 7;
        Random random = new Random();
        StringBuilder sb = new StringBuilder(length);
@@ -20,19 +19,35 @@ public class CacheUtils {
        String code = sb.toString();
        return code;
    }
-    @Cacheable(value = "code", key = "#userMail")
+
+   @Cacheable(value = "code", key = "#userMail")
     public String getCodeFromCache(String userMail) {
 
        return randomCode(userMail);
     }
 
+
     @CacheEvict(value = "code", key = "#userMail")
-    public void clearCache(String userMail) {}
+    public void clearCacheRandom(String userMail) {}
 
+    @Cacheable(value="newMail",key="#id")
+    public void setNewMail(String newMail, String id){
+     cacheNewMail(newMail);
+    }
 
-    @Cacheable(value="newMail",key="#userMail")
+    @Cacheable(value="newMail",key="#id")
+    private String cacheNewMail(String newMail){
+        return newMail;
+    }
 
-    public void setNewMail(String newMail,String userMail){
+    @Cacheable(value="newMail",key="#id")
+    public String getNewMail(String id){
+    return cacheNewMail(id);
+    }
+
+    @CacheEvict(value="newMail",key="#id")
+    public void clearCacheNewMail(String id){
 
     }
+
 }
