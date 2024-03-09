@@ -30,7 +30,6 @@ public class UserController {
     public ResponseEntity<Object> register(@RequestBody @Valid UserCreateDto userCreateRecordDto) throws IOException {
         return ResponseEntity.status(201).body(this.userServices.registerUser(userCreateRecordDto));
     }
-
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody @Valid UserLoginDto userLoginDto) throws AccountNotFoundException, BadRequestException {
         return ResponseEntity.ok().body(this.userServices.loginUser(userLoginDto));

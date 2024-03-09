@@ -60,6 +60,7 @@ public class CacheUtils {
         }
 
     }
+
     @CacheEvict(value = "newMail", key = "#id")
     public void clearCacheNewMail(String id) {
     }

@@ -40,6 +40,7 @@ public class SecurityConfig {
         FilterRegistrationBean<OnlyUnAuthenticatedUsers> registration = new FilterRegistrationBean<>();
         registration.setFilter(new OnlyUnAuthenticatedUsers());
         registration.addUrlPatterns("/user/login");
+        registration.addUrlPatterns("/user/register");
 
         return registration;
     }

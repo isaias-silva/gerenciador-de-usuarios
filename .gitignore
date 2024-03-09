@@ -36,5 +36,8 @@ build/
 /database
 /rabbitmq
 
-public/files/!*.html
+public/files/*.png
+public/files/*.jpg
+public/files/*.jpeg
+public/files/*.gif
 *.env

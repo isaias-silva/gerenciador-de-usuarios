@@ -191,7 +191,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-
     private UserModel getAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -201,7 +200,6 @@ public class UserService implements UserDetailsService {
             throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
         }
     }
-
 
     private Response changeMail(String newMail, UserModel userModel) throws IOException {
         String oldMail = userModel.getMail();
