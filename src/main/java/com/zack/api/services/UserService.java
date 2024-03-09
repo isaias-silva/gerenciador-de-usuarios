@@ -13,13 +13,13 @@ import com.zack.api.repositories.UserRepository;
 import com.zack.api.roles.UserRole;
 import com.zack.api.util.exceptions.ForbiddenException;
 import com.zack.api.util.exceptions.NotFoundException;
+import com.zack.api.util.mail.MailTemplate;
 import com.zack.api.util.responses.bodies.Response;
 import com.zack.api.util.responses.bodies.ResponseJwt;
 import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -55,7 +55,6 @@ public class UserService implements UserDetailsService {
     MailHtmlGenerator mailHtmlGenerator;
 
 
-
     @Transactional
 
     public Response registerUser(UserCreateDto userDoc) throws IOException {
@@ -67,8 +66,7 @@ public class UserService implements UserDetailsService {
 
         sendMailForQueue(userDoc.mail(),
                 userDoc.name(),
-                "bem vindo",
-                "seja bem vindo a MediaCodec! para válidar o email da sua conta use o código: ",
+                MailTemplate.CODE_VERIFICATION,
                 Optional.of(cacheUtils.cacheRandomCode(userDoc.mail())));
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDoc, userModel);
@@ -153,9 +151,8 @@ public class UserService implements UserDetailsService {
 
             sendMailForQueue(user.getMail(),
                     user.getName(),
-                    "email validado!",
-                    "olá seu endereço de email foi validado com sucesso! aproveite a plataforma!",
-                    Optional.empty());
+                    MailTemplate.EMAIL_VALIDATED
+                    , Optional.empty());
             return new Response(GlobalResponses.MAIL_VALIDATED.getText());
         } else {
             throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
@@ -172,8 +169,7 @@ public class UserService implements UserDetailsService {
 
         sendMailForQueue(user.getMail(),
                 user.getName(),
-                "código de verificação",
-                "um novo código de verificação foi solicitado, use o código abaixo para validar seu e-mail:",
+                MailTemplate.NEW_CODE_VERIFICATION,
                 Optional.of(newCode)
         );
 
@@ -225,8 +221,7 @@ public class UserService implements UserDetailsService {
 
         sendMailForQueue(newMail,
                 userModel.getName(),
-                "troca de e-mail",
-                "foi solicitada a troca de e-mail da sua conta para esse e-mail, use o código abaixo para confirmar a troca (se não foi você desconsidere)",
+                MailTemplate.EMAIL_CHANGED,
                 Optional.of(newCode));
 
         return new Response(GlobalResponses.MAIL_CHANGE_INIT.getText());
@@ -234,17 +229,19 @@ public class UserService implements UserDetailsService {
 
     private void sendMailForQueue(String userMail,
                                   String userName,
-                                  String subjectMail,
-                                  String textMail,
+                                  MailTemplate mailTemplate,
                                   Optional<String> random) throws IOException {
+
         EmailSendDto emailSendDto = new EmailSendDto(
                 userMail,
-                subjectMail,
+                mailTemplate.getSubject(),
                 mailHtmlGenerator.generatorMailFile(
                         userName,
-                        textMail,
+                        mailTemplate.getText(),
                         random));
+
         userProducer.publishMessageMail(emailSendDto);
+
     }
 
     @Override
