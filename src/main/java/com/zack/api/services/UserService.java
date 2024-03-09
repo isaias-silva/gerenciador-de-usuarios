@@ -53,7 +53,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
 
-    public Response registerUser(UserCreateDto userDoc) throws IOException {
+    public ResponseJwt registerUser(UserCreateDto userDoc) throws IOException {
 
         UserModel exists = userRepository.findOneByUsernameOrEmail(userDoc.name(), userDoc.mail());
         if (exists != null) {
@@ -70,13 +70,14 @@ public class UserService implements UserDetailsService {
         userModel.setPassword(hash.generateHash(userModel.getPassword()));
 
 
-        ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
+        userRepository.save(userModel);
+        String token = tokenService.generateToken(userModel);
 
-        return new Response(GlobalResponses.USER_REGISTERED.getText());
+        return new ResponseJwt(GlobalResponses.USER_REGISTERED.getText(),token);
     }
 
 
-    public Response loginUser(UserLoginDto userDoc) throws AccountNotFoundException, BadRequestException {
+    public ResponseJwt loginUser(UserLoginDto userDoc) throws AccountNotFoundException, BadRequestException {
 
         var userdata = userRepository.findOneByEmail(userDoc.mail());
         if (userdata == null) {
@@ -210,8 +211,11 @@ public class UserService implements UserDetailsService {
         }
 
     }
-    public Response forgottenPassword() throws IOException {
-        UserModel user = getAuth();
+    public Response forgottenPassword(RedefinePasswordDto redefinePasswordDto) throws IOException {
+        UserModel user = userRepository.findOneByEmail(redefinePasswordDto.email());
+        if(user==null){
+            throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
+        }
         cacheUtils.clearCacheRandom(user.getId().toString());
         String code = cacheUtils.cacheRandomCode(user.getId().toString());
         sendMailForQueue(user.getMail(), user.getName(), MailTemplate.PASSWORD_FORGOTTEN, Optional.of(code));
@@ -220,6 +224,7 @@ public class UserService implements UserDetailsService {
 
     public Response changeForgottenPassword(ChangePasswordForgottenDto changePasswordForgottenDto) throws IOException {
         UserModel user = getAuth();
+        //resolver essa situação aqui
         String cacheCode = cacheUtils.getCodeFromCache(user.getId().toString());
         if (Objects.equals(cacheCode, changePasswordForgottenDto.code())) {
             user.setPassword(hash.generateHash(changePasswordForgottenDto.newPassword()));
