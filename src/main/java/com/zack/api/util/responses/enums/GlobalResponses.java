@@ -11,7 +11,6 @@ public enum GlobalResponses {
     USER_FORBIDDEN("não autorizado."),
     USER_UPDATED_PROFILE("perfil atualizado!"),
     ONLY_IMAGES("apenas imagens são permitidas."),
-
     INVALID_TOKEN("token inválido!"),
     INVALID_CODE("código inválido."),
     NEW_CODE_SEND("um novo código foi enviado para seu e-mail."),
@@ -21,11 +20,9 @@ public enum GlobalResponses {
     MAIL_CHANGE_INIT("foi enviado para seu novo e-mail um código de verificação.");
 
     private final String text;
-
     GlobalResponses(String text) {
         this.text = text;
     }
-
     public String getText() {
         return text;
     }
