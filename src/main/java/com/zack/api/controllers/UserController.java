@@ -41,7 +41,7 @@ public class UserController {
         return ResponseEntity.ok().body(this.userServices.getMe());
     }
 
-    @GetMapping("/send/newCodeValidator")
+    @GetMapping("/send/newCode")
     public ResponseEntity<Object> sendNewCode() throws AccountNotFoundException, IOException {
 
         return ResponseEntity.ok().body(this.userServices.sendNewCode());
@@ -65,9 +65,9 @@ public class UserController {
     }
 
     @PutMapping("/update/profile")
-    public ResponseEntity<Object> updateProfile( @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<Object> updateProfile(@RequestParam("file") MultipartFile file) throws IOException {
 
-        return ResponseEntity.ok().body(uploadService.generateFileProfileInServer(file.getInputStream(),file.getOriginalFilename()));
+        return ResponseEntity.ok().body(uploadService.generateFileProfileInServer(file.getInputStream(), file.getOriginalFilename()));
 
     }
 

@@ -17,11 +17,15 @@ public enum GlobalResponses {
     NEW_CODE_SEND("um novo código foi enviado para seu e-mail."),
     MAIL_ALREADY_VALIDATED("e-mail já validado"),
     MAIL_VALIDATED("e-mail validado com sucesso."),
+    NOT_FOUND_MAIL_CACHED("novo e-mail não encontrado no cache"),
     MAIL_CHANGE_INIT("foi enviado para seu novo e-mail um código de verificação.");
+
     private final String text;
+
     GlobalResponses(String text) {
         this.text = text;
     }
+
     public String getText() {
         return text;
     }

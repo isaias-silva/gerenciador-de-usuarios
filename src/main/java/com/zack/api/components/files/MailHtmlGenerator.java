@@ -27,7 +27,7 @@ public class MailHtmlGenerator {
 
         StringBuilder content= new StringBuilder();
 
-        Path pathMailFile = path.resolve(code.isPresent()?"default.verify":"default.message"+ ".html");
+        Path pathMailFile = path.resolve((code.isPresent()?"default.verify":"default.message")+ ".html");
         File file = new File(pathMailFile.toString());
         FileReader fileReader = new FileReader(file);
 
@@ -35,7 +35,7 @@ public class MailHtmlGenerator {
 
         String line;
 
-        System.out.println(code.get());
+
         while ((line = bufferedReader.readLine()) != null) {
           String replacedLine=line;
            if(line.contains("[NAME]")) replacedLine=line.replace("[NAME]",name) ;

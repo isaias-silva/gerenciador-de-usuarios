@@ -19,6 +19,7 @@ import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -53,6 +54,8 @@ public class UserService implements UserDetailsService {
     @Autowired
     MailHtmlGenerator mailHtmlGenerator;
 
+
+
     @Transactional
 
     public Response registerUser(UserCreateDto userDoc) throws IOException {
@@ -66,7 +69,7 @@ public class UserService implements UserDetailsService {
                 userDoc.name(),
                 "bem vindo",
                 "seja bem vindo a MediaCodec! para válidar o email da sua conta use o código: ",
-                Optional.of(cacheUtils.randomCode(userDoc.mail())));
+                Optional.of(cacheUtils.cacheRandomCode(userDoc.mail())));
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDoc, userModel);
         userModel.setRole(UserRole.VERIFY_MAIL);
@@ -139,7 +142,7 @@ public class UserService implements UserDetailsService {
 
         UserModel user = getAuth();
         if (user.getRole() != UserRole.VERIFY_MAIL) {
-            throw new BadRequestException(GlobalResponses.MAIL_VALIDATED.getText());
+            throw new BadRequestException(GlobalResponses.MAIL_ALREADY_VALIDATED.getText());
         }
 
         String cacheCode = cacheUtils.getCodeFromCache(user.getMail());
@@ -184,7 +187,7 @@ public class UserService implements UserDetailsService {
 
         String cacheCode = cacheUtils.getCodeFromCache(user.getMail());
         if (Objects.equals(cacheCode, code)) {
-            String newMail = cacheUtils.getNewMail(userId);
+            String newMail = cacheUtils.getCachedNewMail(user.getId().toString());
             user.setMail(newMail);
             userRepository.save(user);
             cacheUtils.clearCacheRandom(user.getMail());
@@ -214,11 +217,11 @@ public class UserService implements UserDetailsService {
 
         cacheUtils.clearCacheNewMail(userId);
 
-        cacheUtils.setNewMail(newMail, userId);
+        cacheUtils.cacheNewMail(newMail, userId);
 
         cacheUtils.clearCacheRandom(oldMail);
 
-        String newCode = cacheUtils.randomCode(oldMail);
+        String newCode = cacheUtils.cacheRandomCode(oldMail);
 
         sendMailForQueue(newMail,
                 userModel.getName(),
