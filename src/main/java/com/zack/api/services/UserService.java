@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.zack.api.util.responses.enums.GlobalResponses.USER_ALREADY_EXISTS;
 
 @Service("userService")
 public class UserService implements UserDetailsService {
@@ -61,7 +60,7 @@ public class UserService implements UserDetailsService {
 
         UserModel exists = userRepository.findOneByUsernameOrEmail(userDoc.name(), userDoc.mail());
         if (exists != null) {
-            throw new BadRequestException(USER_ALREADY_EXISTS.getText());
+            throw new BadRequestException(GlobalResponses.USER_ALREADY_EXISTS.getText());
         }
 
         sendMailForQueue(userDoc.mail(),
@@ -73,6 +72,7 @@ public class UserService implements UserDetailsService {
         userModel.setRole(UserRole.VERIFY_MAIL);
         userModel.setPassword(hash.generateHash(userModel.getPassword()));
 
+
         ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(userModel));
 
         return new Response(GlobalResponses.USER_REGISTERED.getText());
@@ -80,20 +80,17 @@ public class UserService implements UserDetailsService {
 
 
     public Response loginUser(UserLoginDto userDoc) throws AccountNotFoundException, BadRequestException {
+
         var userdata = userRepository.findOneByEmail(userDoc.mail());
         if (userdata == null) {
             throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
         }
-
-
         if (!(hash.compareHash(userDoc.password(), userdata.getPassword()))) {
             throw new BadRequestException((GlobalResponses.USER_INCORRECT_PASSWORD.getText()));
         } else {
             String token = tokenService.generateToken(userdata);
-
             return new ResponseJwt(GlobalResponses.USER_LOGGED.getText(), token);
         }
-
     }
 
     public Map<String, String> getMe() throws AccountNotFoundException {
@@ -117,9 +114,7 @@ public class UserService implements UserDetailsService {
 
     }
 
-
     public Response updateUser(UserUpdateDto data) throws IOException {
-
 
         UserModel user = getAuth();
 
@@ -195,6 +190,7 @@ public class UserService implements UserDetailsService {
 
         }
     }
+
 
     private UserModel getAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

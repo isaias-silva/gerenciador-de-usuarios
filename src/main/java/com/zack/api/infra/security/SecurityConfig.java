@@ -2,7 +2,9 @@ package com.zack.api.infra.security;
 
 
 import com.zack.api.filters.JwtFilter;
+import com.zack.api.filters.OnlyUnAuthenticatedUsers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 
-public class SecurityCofigurations {
+public class SecurityConfig {
 
     @Autowired
     JwtFilter jwtFilter;
@@ -33,5 +35,13 @@ public class SecurityCofigurations {
         ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
+    @Bean
+    public FilterRegistrationBean<OnlyUnAuthenticatedUsers> onlyUnAuthenticatedUsersFilterRegistrationBean() {
+        FilterRegistrationBean<OnlyUnAuthenticatedUsers> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new OnlyUnAuthenticatedUsers());
+        registration.addUrlPatterns("/user/login");
+
+        return registration;
+    }
 
 }

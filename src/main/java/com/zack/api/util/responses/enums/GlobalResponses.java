@@ -10,6 +10,7 @@ public enum GlobalResponses {
     USER_EMAIL_CHANGED("e-mail atualizado com sucesso!"),
     USER_FORBIDDEN("não autorizado."),
     USER_UPDATED_PROFILE("perfil atualizado!"),
+    USER_IS_AUTHENTICATED("usuário está logado."),
     ONLY_IMAGES("apenas imagens são permitidas."),
     INVALID_TOKEN("token inválido!"),
     INVALID_CODE("código inválido."),
