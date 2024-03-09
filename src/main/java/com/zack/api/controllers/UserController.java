@@ -1,10 +1,7 @@
 package com.zack.api.controllers;
 
 
-import com.zack.api.dtos.UserCreateDto;
-import com.zack.api.dtos.UserLoginDto;
-import com.zack.api.dtos.UserUpdateDto;
-import com.zack.api.dtos.ValidateCodeDto;
+import com.zack.api.dtos.*;
 import com.zack.api.services.UploadService;
 import com.zack.api.services.UserService;
 import jakarta.validation.Valid;
@@ -34,17 +31,27 @@ public class UserController {
     public ResponseEntity<Object> login(@RequestBody @Valid UserLoginDto userLoginDto) throws AccountNotFoundException, BadRequestException {
         return ResponseEntity.ok().body(this.userServices.loginUser(userLoginDto));
     }
-
     @GetMapping("/me")
     public ResponseEntity<Object> getMe() throws AccountNotFoundException, BadRequestException {
         return ResponseEntity.ok().body(this.userServices.getMe());
     }
-
     @GetMapping("/send/newCode")
     public ResponseEntity<Object> sendNewCode() throws AccountNotFoundException, IOException {
-
         return ResponseEntity.ok().body(this.userServices.sendNewCode());
+    }
 
+    @GetMapping("/redefine/password")
+
+    public ResponseEntity<Object> forgottenPass() throws AccountNotFoundException, IOException {
+        return ResponseEntity.ok().body(this.userServices.forgottenPassword());
+    }
+    @PutMapping("/update/password")
+    public ResponseEntity<Object> updatePassword(@RequestBody @Valid ChangePasswordDto body) throws AccountNotFoundException, IOException {
+        return ResponseEntity.ok().body(this.userServices.changePassword(body));
+    }
+    @PutMapping("/update/password/forgotten")
+    public ResponseEntity<Object> updatePasswordForgotten(@RequestBody @Valid ChangePasswordForgottenDto body) throws AccountNotFoundException, IOException {
+        return ResponseEntity.ok().body(this.userServices.changeForgottenPassword(body));
     }
 
     @PutMapping("/update/confirm/mail")

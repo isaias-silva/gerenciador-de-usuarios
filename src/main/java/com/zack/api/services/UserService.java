@@ -3,10 +3,7 @@ package com.zack.api.services;
 import com.zack.api.components.crypt.Hash;
 import com.zack.api.components.files.MailHtmlGenerator;
 import com.zack.api.components.utils.CacheUtils;
-import com.zack.api.dtos.EmailSendDto;
-import com.zack.api.dtos.UserCreateDto;
-import com.zack.api.dtos.UserLoginDto;
-import com.zack.api.dtos.UserUpdateDto;
+import com.zack.api.dtos.*;
 import com.zack.api.infra.queue.producers.UserProducer;
 import com.zack.api.models.UserModel;
 import com.zack.api.repositories.UserRepository;
@@ -198,6 +195,38 @@ public class UserService implements UserDetailsService {
             return (UserModel) authentication.getPrincipal();
         } else {
             throw new ForbiddenException(GlobalResponses.USER_FORBIDDEN.getText());
+        }
+    }
+
+    public Response changePassword(ChangePasswordDto changePasswordDto) {
+        UserModel user = getAuth();
+        boolean correctPassword = hash.compareHash(changePasswordDto.password(), user.getPassword());
+        if (!correctPassword) {
+            throw new ForbiddenException(GlobalResponses.USER_INCORRECT_PASSWORD.getText());
+        } else {
+            user.setPassword(hash.generateHash(changePasswordDto.newPassword()));
+            userRepository.save(user);
+            return new Response(GlobalResponses.USER_UPDATED.getText());
+        }
+
+    }
+    public Response forgottenPassword() throws IOException {
+        UserModel user = getAuth();
+        cacheUtils.clearCacheRandom(user.getId().toString());
+        String code = cacheUtils.cacheRandomCode(user.getId().toString());
+        sendMailForQueue(user.getMail(), user.getName(), MailTemplate.PASSWORD_FORGOTTEN, Optional.of(code));
+        return new Response(GlobalResponses.PASSWORD_CHANGE_INIT.getText());
+    }
+
+    public Response changeForgottenPassword(ChangePasswordForgottenDto changePasswordForgottenDto) throws IOException {
+        UserModel user = getAuth();
+        String cacheCode = cacheUtils.getCodeFromCache(user.getId().toString());
+        if (Objects.equals(cacheCode, changePasswordForgottenDto.code())) {
+            user.setPassword(hash.generateHash(changePasswordForgottenDto.newPassword()));
+            userRepository.save(user);
+            return new Response(GlobalResponses.USER_UPDATED.getText());
+        } else {
+            throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
         }
     }
 

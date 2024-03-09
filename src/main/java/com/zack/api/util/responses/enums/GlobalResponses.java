@@ -18,6 +18,7 @@ public enum GlobalResponses {
     MAIL_ALREADY_VALIDATED("e-mail já validado"),
     MAIL_VALIDATED("e-mail validado com sucesso."),
     NOT_FOUND_MAIL_CACHED("novo e-mail não encontrado no cache"),
+    PASSWORD_CHANGE_INIT("foi enviado para seu e-mail um código para troca de senha."),
     MAIL_CHANGE_INIT("foi enviado para seu novo e-mail um código de verificação.");
 
     private final String text;

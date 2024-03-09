@@ -22,7 +22,6 @@ public class OnlyUnAuthenticatedUsers implements Filter {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String header = httpRequest.getHeader("Authorization");
-        System.out.println(header);
         return header!=null;
     }
 }

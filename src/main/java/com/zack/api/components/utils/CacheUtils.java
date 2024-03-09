@@ -18,8 +18,8 @@ public class CacheUtils {
 
     private CacheManager cacheManager;
 
-    @Cacheable(value = "code", key = "#userMail")
-    public String cacheRandomCode(String userMail) {
+    @Cacheable(value = "code", key = "#identifier")
+    public String cacheRandomCode(String identifier) {
         int length = 7;
         Random random = new Random();
         StringBuilder sb = new StringBuilder(length);
@@ -30,23 +30,18 @@ public class CacheUtils {
         return code;
     }
 
-    @Cacheable(value = "code", key = "#userMail")
-    public String getCodeFromCache(String userMail) {
-
-        return cacheRandomCode(userMail);
+    @Cacheable(value = "code", key = "#identifier")
+    public String getCodeFromCache(String identifier) {
+        return cacheRandomCode(identifier);
     }
-
-    @CacheEvict(value = "code", key = "#userMail")
-    public void clearCacheRandom(String userMail) {
+    @CacheEvict(value = "code", key = "#identifier")
+    public void clearCacheRandom(String identifier) {
     }
-
     @Cacheable(value = "newMail", key = "#id")
-
     public String cacheNewMail(String newMail, String id) {
-        System.out.println(newMail);
+
         return newMail;
     }
-
     public String getCachedNewMail(String id) {
         Cache cache = cacheManager.getCache("newMail");
         if (cache != null) {
@@ -60,7 +55,6 @@ public class CacheUtils {
         }
 
     }
-
     @CacheEvict(value = "newMail", key = "#id")
     public void clearCacheNewMail(String id) {
     }
