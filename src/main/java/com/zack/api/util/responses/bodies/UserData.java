@@ -3,20 +3,25 @@ package com.zack.api.util.responses.bodies;
 import com.zack.api.models.UserModel;
 import com.zack.api.roles.UserRole;
 
-public class UserData{
-   private String name;
+public class UserData {
+    private String name;
     private String profile;
-   private String mail;
-   private UserRole role;
-   private String resume;
+    private String mail;
+    private UserRole role;
+    private String resume;
+    private String githubURL;
+    private String instagramURL;
+    private String portfolioURL;
 
     public UserData(UserModel user) {
-        this.name=user.getName();
-        this.profile=user.getProfile();
-        this.mail=user.getMail();
-        this.role=user.getRole();
-        this.resume=user.getResume();
-
+        this.name = user.getName();
+        this.profile = user.getProfile();
+        this.mail = user.getMail();
+        this.role = user.getRole();
+        this.resume = user.getResume();
+        this.githubURL = user.getGithubURL();
+        this.portfolioURL = user.getPortfolioURL();
+        this.instagramURL = user.getInstagramURL();
 
     }
 
@@ -58,5 +63,29 @@ public class UserData{
 
     public void setResume(String resume) {
         this.resume = resume;
+    }
+
+    public String getGithubURL() {
+        return githubURL;
+    }
+
+    public void setGithubURL(String githubURL) {
+        this.githubURL = githubURL;
+    }
+
+    public String getInstagramURL() {
+        return instagramURL;
+    }
+
+    public void setInstagramURL(String instagramURL) {
+        this.instagramURL = instagramURL;
+    }
+
+    public String getPortfolioURL() {
+        return portfolioURL;
+    }
+
+    public void setPortfolioURL(String portfolioURL) {
+        this.portfolioURL = portfolioURL;
     }
 }

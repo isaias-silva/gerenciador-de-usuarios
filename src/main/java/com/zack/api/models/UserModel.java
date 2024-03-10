@@ -16,27 +16,42 @@ import java.util.UUID;
 @Table(name = "USERS")
 
 public class UserModel implements Serializable, UserDetails {
-    private static final long serialId = 1L;
-
+    private static final long serialId = 3L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 
     private UUID id;
     private String name;
-
     private String mail;
     private String profile;
-
     private String password;
     private String resume;
     private UserRole role;
 
+
+    private String githubURL;
+
+    private String instagramURL;
+
+    private String portfolioURL;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (this.role == UserRole.ADMIN)
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else if(this.role==UserRole.USER) return List.of(new SimpleGrantedAuthority("ROLE_USER"),new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
-        else return List.of(new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+        switch (this.role){
+
+            case ADMIN -> {
+                return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"),new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+            }
+            case USER -> {
+                return List.of(new SimpleGrantedAuthority("ROLE_USER"),new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+            }
+            default -> {
+                return List.of(new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+
+            }
+        }
+
     }
 
     public String getPassword() {
@@ -117,5 +132,29 @@ public class UserModel implements Serializable, UserDetails {
     }
     public void setRole(UserRole role){
         this.role=role;
+    }
+
+    public String getPortfolioURL() {
+        return portfolioURL;
+    }
+
+    public void setPortfolioURL(String portfolioURL) {
+        this.portfolioURL = portfolioURL;
+    }
+
+    public String getInstagramURL() {
+        return instagramURL;
+    }
+
+    public void setInstagramURL(String instagramURL) {
+        this.instagramURL = instagramURL;
+    }
+
+    public String getGithubURL() {
+        return githubURL;
+    }
+
+    public void setGithubURL(String githubURL) {
+        this.githubURL = githubURL;
     }
 }

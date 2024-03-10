@@ -69,7 +69,7 @@ public class UserService implements UserDetailsService {
         return new ResponseJwt(GlobalResponses.USER_REGISTERED.getText(), token);
     }
 
-    public ResponseJwt loginUser(UserLoginDto userDoc) throws  BadRequestException {
+    public ResponseJwt loginUser(UserLoginDto userDoc) throws BadRequestException {
 
         var userdata = userRepository.findOneByEmail(userDoc.mail());
         if (userdata == null) {
@@ -84,28 +84,27 @@ public class UserService implements UserDetailsService {
     }
 
     public UserData getMe() {
-
-
-            UserModel user = getAuth();
-
-            return new UserData(user);
-
-
-
-
-
+        UserModel user = getAuth();
+        return new UserData(user);
     }
 
     public Response updateUser(UserUpdateDto data) throws IOException {
 
         UserModel user = getAuth();
+        Optional<String> name=data.name()!=null?Optional.of(data.name()):Optional.empty();
+        Optional<String> resume=data.resume()!=null?Optional.of(data.resume()):Optional.empty();
+        Optional<String> githubURL= data.githubURL()!=null?Optional.of(data.githubURL()):Optional.empty();
+        Optional<String> instagramURL= data.instagramURL()!=null?Optional.of(data.instagramURL()):Optional.empty();
+        Optional<String> portfolioURL=data.portfolioURL()!=null?Optional.of(data.portfolioURL()):Optional.empty();
 
-        if (data.name() != null) user.setName(data.name());
-        if (data.resume() != null) user.setResume(data.resume());
+        name.ifPresent(user::setName);
+        resume.ifPresent(user::setResume);
+        githubURL.ifPresent(user::setGithubURL);
+        instagramURL.ifPresent(user::setInstagramURL);
+        portfolioURL.ifPresent(user::setPortfolioURL);
 
         userRepository.save(user);
-
-        if (data.mail() != null) {
+        if (data.mail()!=null) {
             return changeMail(data.mail(), user);
         } else {
             return new Response(GlobalResponses.USER_UPDATED.getText());
@@ -139,6 +138,9 @@ public class UserService implements UserDetailsService {
     public Response sendNewCode() throws IOException {
 
         UserModel user = getAuth();
+        if (user.getRole() != UserRole.VERIFY_MAIL) {
+            throw new BadRequestException(GlobalResponses.MAIL_ALREADY_VALIDATED.getText());
+        }
         cacheUtils.clearCacheRandom(user.getMail());
 
         String newCode = cacheUtils.getCodeFromCache(user.getMail());

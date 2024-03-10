@@ -1,8 +1,9 @@
 package com.zack.api.roles;
 
 public enum UserRole {
-    ADMIN("admin"),
+
     USER("user"),
+    ADMIN("admin"),
    VERIFY_MAIL("verify_mail");
 
     public String getRole() {

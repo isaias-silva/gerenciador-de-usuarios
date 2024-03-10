@@ -27,7 +27,6 @@ import com.zack.api.dtos.*;
 
 
 public class UserController {
-
     @Autowired
     UserService userServices;
     @Autowired
@@ -82,7 +81,9 @@ public class UserController {
                     @ApiResponse(responseCode = "403", description = "usuário não autorizado.", content = @Content(schema = @Schema(implementation = Response.class))),
             })
     public ResponseEntity<UserData> getMe() throws NotFoundException {
-        return ResponseEntity.status(201).body(this.userServices.getMe());
+
+        return ResponseEntity.ok().body(this.userServices.getMe());
+
     }
 
     @GetMapping("/send/newCode")
