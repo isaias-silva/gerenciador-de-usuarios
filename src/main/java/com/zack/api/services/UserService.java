@@ -13,6 +13,7 @@ import com.zack.api.util.exceptions.NotFoundException;
 import com.zack.api.util.mail.MailTemplate;
 import com.zack.api.util.responses.bodies.Response;
 import com.zack.api.util.responses.bodies.ResponseJwt;
+import com.zack.api.util.responses.bodies.UserData;
 import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
@@ -25,10 +26,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -71,7 +69,7 @@ public class UserService implements UserDetailsService {
         return new ResponseJwt(GlobalResponses.USER_REGISTERED.getText(), token);
     }
 
-    public ResponseJwt loginUser(UserLoginDto userDoc) throws AccountNotFoundException, BadRequestException {
+    public ResponseJwt loginUser(UserLoginDto userDoc) throws  BadRequestException {
 
         var userdata = userRepository.findOneByEmail(userDoc.mail());
         if (userdata == null) {
@@ -85,24 +83,16 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Map<String, String> getMe() throws AccountNotFoundException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public UserData getMe() {
 
-        if (authentication != null && authentication.isAuthenticated()) {
 
-            UserModel user = (UserModel) authentication.getPrincipal();
+            UserModel user = getAuth();
 
-            Map<String, String> formatUserData = new HashMap<>();
-            formatUserData.put("name", user.getName());
-            formatUserData.put("mail", user.getMail());
-            formatUserData.put("profile", user.getProfile());
-            formatUserData.put("resume", user.getResume());
-            formatUserData.put("role", user.getRole().name());
+            return new UserData(user);
 
-            return formatUserData;
-        } else {
-            throw new NotFoundException((GlobalResponses.USER_NOT_FOUND.getText()));
-        }
+
+
+
 
     }
 
@@ -111,7 +101,7 @@ public class UserService implements UserDetailsService {
         UserModel user = getAuth();
 
         if (data.name() != null) user.setName(data.name());
-        if (data.resume() != null) user.setResume(data.resume().toString());
+        if (data.resume() != null) user.setResume(data.resume());
 
         userRepository.save(user);
 
