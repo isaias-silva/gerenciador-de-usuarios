@@ -34,14 +34,16 @@ public class CacheUtils {
     public String getCodeFromCache(String identifier) {
         return cacheRandomCode(identifier);
     }
+
     @CacheEvict(value = "code", key = "#identifier")
     public void clearCacheRandom(String identifier) {
     }
+
     @Cacheable(value = "newMail", key = "#id")
     public String cacheNewMail(String newMail, String id) {
-
         return newMail;
     }
+
     public String getCachedNewMail(String id) {
         Cache cache = cacheManager.getCache("newMail");
         if (cache != null) {
@@ -55,6 +57,7 @@ public class CacheUtils {
         }
 
     }
+
     @CacheEvict(value = "newMail", key = "#id")
     public void clearCacheNewMail(String id) {
     }

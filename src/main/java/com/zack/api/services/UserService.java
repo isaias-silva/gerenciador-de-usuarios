@@ -17,8 +17,6 @@ import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -68,14 +66,10 @@ public class UserService implements UserDetailsService {
         BeanUtils.copyProperties(userDoc, userModel);
         userModel.setRole(UserRole.VERIFY_MAIL);
         userModel.setPassword(hash.generateHash(userModel.getPassword()));
-
-
         userRepository.save(userModel);
         String token = tokenService.generateToken(userModel);
-
-        return new ResponseJwt(GlobalResponses.USER_REGISTERED.getText(),token);
+        return new ResponseJwt(GlobalResponses.USER_REGISTERED.getText(), token);
     }
-
 
     public ResponseJwt loginUser(UserLoginDto userDoc) throws AccountNotFoundException, BadRequestException {
 
@@ -123,7 +117,6 @@ public class UserService implements UserDetailsService {
 
         if (data.mail() != null) {
             return changeMail(data.mail(), user);
-
         } else {
             return new Response(GlobalResponses.USER_UPDATED.getText());
         }
@@ -211,9 +204,10 @@ public class UserService implements UserDetailsService {
         }
 
     }
+
     public Response forgottenPassword(RedefinePasswordDto redefinePasswordDto) throws IOException {
         UserModel user = userRepository.findOneByEmail(redefinePasswordDto.email());
-        if(user==null){
+        if (user == null) {
             throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
         }
         cacheUtils.clearCacheRandom(user.getId().toString());
@@ -223,9 +217,13 @@ public class UserService implements UserDetailsService {
     }
 
     public Response changeForgottenPassword(ChangePasswordForgottenDto changePasswordForgottenDto) throws IOException {
-        UserModel user = getAuth();
-        //resolver essa situação aqui
+        UserModel user = userRepository.findOneByEmail(changePasswordForgottenDto.mail());
+        if (user == null) {
+            throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
+        }
         String cacheCode = cacheUtils.getCodeFromCache(user.getId().toString());
+        cacheUtils.clearCacheRandom(user.getId().toString());
+
         if (Objects.equals(cacheCode, changePasswordForgottenDto.code())) {
             user.setPassword(hash.generateHash(changePasswordForgottenDto.newPassword()));
             userRepository.save(user);
@@ -255,10 +253,7 @@ public class UserService implements UserDetailsService {
         return new Response(GlobalResponses.MAIL_CHANGE_INIT.getText());
     }
 
-    private void sendMailForQueue(String userMail,
-                                  String userName,
-                                  MailTemplate mailTemplate,
-                                  Optional<String> random) throws IOException {
+    private void sendMailForQueue(String userMail, String userName, MailTemplate mailTemplate, Optional<String> random) throws IOException {
 
         EmailSendDto emailSendDto = new EmailSendDto(
                 userMail,
