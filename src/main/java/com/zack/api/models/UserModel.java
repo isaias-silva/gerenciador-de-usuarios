@@ -8,9 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity()
 @Table(name = "USERS")
@@ -19,32 +17,39 @@ public class UserModel implements Serializable, UserDetails {
     private static final long serialId = 3L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
     private UUID id;
+
+    @Column
     private String name;
+    @Column
     private String mail;
+    @Column
     private String profile;
+    @Column
     private String password;
+    @Column
     private String resume;
+
+    @Column
     private UserRole role;
-
-
+    @Column
     private String githubURL;
-
+    @Column
     private String instagramURL;
-
+    @Column
     private String portfolioURL;
-
+    @OneToMany(mappedBy = "userMail")
+    private List<EmailModel> received_mails;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        switch (this.role){
+        switch (this.role) {
 
             case ADMIN -> {
-                return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"),new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+                return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
             }
             case USER -> {
-                return List.of(new SimpleGrantedAuthority("ROLE_USER"),new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+                return List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
             }
             default -> {
                 return List.of(new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
@@ -130,8 +135,9 @@ public class UserModel implements Serializable, UserDetails {
     public UserRole getRole() {
         return role;
     }
-    public void setRole(UserRole role){
-        this.role=role;
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     public String getPortfolioURL() {
@@ -157,4 +163,11 @@ public class UserModel implements Serializable, UserDetails {
     public void setGithubURL(String githubURL) {
         this.githubURL = githubURL;
     }
+
+
+    public List<EmailModel> getReceived_mail() {
+        return received_mails;
+    }
+
+
 }
