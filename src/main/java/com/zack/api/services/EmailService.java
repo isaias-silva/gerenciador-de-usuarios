@@ -9,9 +9,15 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class EmailService {
@@ -47,6 +53,12 @@ public class EmailService {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public List<EmailModel> getMails(int page, int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<EmailModel> emailsDb= emailRepository.getResumeEmails(pageable);
+        return new ArrayList<>(emailsDb.getContent());
     }
 
     private void saveMail(String to, String subject, StringBuilder content) {

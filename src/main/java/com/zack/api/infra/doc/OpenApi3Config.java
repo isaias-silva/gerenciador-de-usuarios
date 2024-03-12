@@ -30,4 +30,12 @@ public class OpenApi3Config {
                 .pathsToMatch( "/user/**")
                 .build();
     }
+    @Bean
+    public GroupedOpenApi admGroup() {
+        return GroupedOpenApi.builder()
+                .group("adm-api")
+                .displayName("adm API")
+                .pathsToMatch( "/adm/**")
+                .build();
+    }
 }

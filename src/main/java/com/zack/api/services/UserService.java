@@ -14,10 +14,14 @@ import com.zack.api.util.mail.MailTemplate;
 import com.zack.api.util.responses.bodies.Response;
 import com.zack.api.util.responses.bodies.ResponseJwt;
 import com.zack.api.util.responses.bodies.UserData;
+import com.zack.api.util.responses.bodies.UserDataForAdm;
 import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,8 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service("userService")
@@ -46,7 +49,6 @@ public class UserService implements UserDetailsService {
     @Autowired
     MailHtmlGenerator mailHtmlGenerator;
 
-
     @Transactional
 
     public ResponseJwt registerUser(UserCreateDto userDoc) throws IOException {
@@ -56,10 +58,7 @@ public class UserService implements UserDetailsService {
             throw new BadRequestException(GlobalResponses.USER_ALREADY_EXISTS.getText());
         }
 
-        sendMailForQueue(userDoc.mail(),
-                userDoc.name(),
-                MailTemplate.CODE_VERIFICATION,
-                Optional.of(cacheUtils.cacheRandomCode(userDoc.mail())));
+        sendMailForQueue(userDoc.mail(), userDoc.name(), MailTemplate.CODE_VERIFICATION, Optional.of(cacheUtils.cacheRandomCode(userDoc.mail())));
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDoc, userModel);
         userModel.setRole(UserRole.VERIFY_MAIL);
@@ -88,14 +87,38 @@ public class UserService implements UserDetailsService {
         return new UserData(user);
     }
 
+    public UserData getUser(UUID id) {
+        Optional<UserModel> user = userRepository.findById(id);
+
+        if (user.isEmpty()) {
+            throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
+        }
+        return new UserData(user.get());
+    }
+
+    public List<UserData> getAllUsers(int page, int size) {
+        UserModel user = getAuth();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserModel> users = userRepository.findAll(pageable);
+        List<UserData> formatUsers = new ArrayList<>();
+
+        users.forEach(userDb -> {
+            if (!Objects.equals(user.getId(), userDb.getId())) {
+                formatUsers.add(new UserDataForAdm(userDb));
+            }
+        });
+
+        return formatUsers;
+    }
+
     public Response updateUser(UserUpdateDto data) throws IOException {
 
         UserModel user = getAuth();
-        Optional<String> name=data.name()!=null?Optional.of(data.name()):Optional.empty();
-        Optional<String> resume=data.resume()!=null?Optional.of(data.resume()):Optional.empty();
-        Optional<String> githubURL= data.githubURL()!=null?Optional.of(data.githubURL()):Optional.empty();
-        Optional<String> instagramURL= data.instagramURL()!=null?Optional.of(data.instagramURL()):Optional.empty();
-        Optional<String> portfolioURL=data.portfolioURL()!=null?Optional.of(data.portfolioURL()):Optional.empty();
+        Optional<String> name = data.name() != null ? Optional.of(data.name()) : Optional.empty();
+        Optional<String> resume = data.resume() != null ? Optional.of(data.resume()) : Optional.empty();
+        Optional<String> githubURL = data.githubURL() != null ? Optional.of(data.githubURL()) : Optional.empty();
+        Optional<String> instagramURL = data.instagramURL() != null ? Optional.of(data.instagramURL()) : Optional.empty();
+        Optional<String> portfolioURL = data.portfolioURL() != null ? Optional.of(data.portfolioURL()) : Optional.empty();
 
         name.ifPresent(user::setName);
         resume.ifPresent(user::setResume);
@@ -104,7 +127,7 @@ public class UserService implements UserDetailsService {
         portfolioURL.ifPresent(user::setPortfolioURL);
 
         userRepository.save(user);
-        if (data.mail()!=null) {
+        if (data.mail() != null) {
             return changeMail(data.mail(), user);
         } else {
             return new Response(GlobalResponses.USER_UPDATED.getText());
@@ -124,10 +147,7 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
             cacheUtils.clearCacheRandom(user.getMail());
 
-            sendMailForQueue(user.getMail(),
-                    user.getName(),
-                    MailTemplate.EMAIL_VALIDATED
-                    , Optional.empty());
+            sendMailForQueue(user.getMail(), user.getName(), MailTemplate.EMAIL_VALIDATED, Optional.empty());
             return new Response(GlobalResponses.MAIL_VALIDATED.getText());
         } else {
             throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
@@ -145,11 +165,7 @@ public class UserService implements UserDetailsService {
 
         String newCode = cacheUtils.getCodeFromCache(user.getMail());
 
-        sendMailForQueue(user.getMail(),
-                user.getName(),
-                MailTemplate.NEW_CODE_VERIFICATION,
-                Optional.of(newCode)
-        );
+        sendMailForQueue(user.getMail(), user.getName(), MailTemplate.NEW_CODE_VERIFICATION, Optional.of(newCode));
 
         return new Response(GlobalResponses.NEW_CODE_SEND.getText());
 
@@ -202,6 +218,7 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
         }
+
         cacheUtils.clearCacheRandom(user.getId().toString());
         String code = cacheUtils.cacheRandomCode(user.getId().toString());
         sendMailForQueue(user.getMail(), user.getName(), MailTemplate.PASSWORD_FORGOTTEN, Optional.of(code));
@@ -214,11 +231,11 @@ public class UserService implements UserDetailsService {
             throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
         }
         String cacheCode = cacheUtils.getCodeFromCache(user.getId().toString());
-        cacheUtils.clearCacheRandom(user.getId().toString());
-
+        System.out.println(cacheCode);
         if (Objects.equals(cacheCode, changePasswordForgottenDto.code())) {
             user.setPassword(hash.generateHash(changePasswordForgottenDto.newPassword()));
             userRepository.save(user);
+            cacheUtils.clearCacheRandom(user.getId().toString());
             return new Response(GlobalResponses.USER_UPDATED.getText());
         } else {
             throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
@@ -237,23 +254,14 @@ public class UserService implements UserDetailsService {
 
         String newCode = cacheUtils.cacheRandomCode(oldMail);
 
-        sendMailForQueue(newMail,
-                userModel.getName(),
-                MailTemplate.EMAIL_CHANGED,
-                Optional.of(newCode));
+        sendMailForQueue(newMail, userModel.getName(), MailTemplate.EMAIL_CHANGED, Optional.of(newCode));
 
         return new Response(GlobalResponses.MAIL_CHANGE_INIT.getText());
     }
 
     private void sendMailForQueue(String userMail, String userName, MailTemplate mailTemplate, Optional<String> random) throws IOException {
 
-        EmailSendDto emailSendDto = new EmailSendDto(
-                userMail,
-                mailTemplate.getSubject(),
-                mailHtmlGenerator.generatorMailFile(
-                        userName,
-                        mailTemplate.getText(),
-                        random));
+        EmailSendDto emailSendDto = new EmailSendDto(userMail, mailTemplate.getSubject(), mailHtmlGenerator.generatorMailFile(userName, mailTemplate.getText(), random));
 
         userProducer.publishMessageMail(emailSendDto);
 

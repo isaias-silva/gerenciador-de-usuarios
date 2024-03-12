@@ -46,10 +46,10 @@ public class UserModel implements Serializable, UserDetails {
         switch (this.role) {
 
             case ADMIN -> {
-                return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+                return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
             }
             case USER -> {
-                return List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
+                return List.of(new SimpleGrantedAuthority("ROLE_USER"));
             }
             default -> {
                 return List.of(new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));

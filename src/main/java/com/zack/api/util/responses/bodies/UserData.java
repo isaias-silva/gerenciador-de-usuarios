@@ -14,6 +14,7 @@ public class UserData {
     private String portfolioURL;
 
     public UserData(UserModel user) {
+
         this.name = user.getName();
         this.profile = user.getProfile();
         this.mail = user.getMail();

@@ -30,7 +30,8 @@ public class SecurityConfig {
         ).authorizeHttpRequests(auth ->
                 auth.requestMatchers(HttpMethod.PUT, "/user/update/**").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/user/validate").hasRole("VERIFY_MAIL")
-                        .requestMatchers(HttpMethod.GET, "/user/**").hasRole("VERIFY_MAIL")
+                        .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("ADMIN","USER","VERIFY_MAIL")
+                        .requestMatchers("/adm/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/user/change/password/forgotten").permitAll()
                         .anyRequest().permitAll()
         ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
