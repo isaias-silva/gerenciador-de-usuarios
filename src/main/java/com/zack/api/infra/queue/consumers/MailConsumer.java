@@ -18,4 +18,5 @@ public class MailConsumer {
         emailService.sendMail(new StringBuilder(payload.content()),payload.subject(),payload.to());
 
     }
+
 }

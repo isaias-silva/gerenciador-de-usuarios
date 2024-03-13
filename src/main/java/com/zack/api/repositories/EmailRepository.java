@@ -7,10 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public interface EmailRepository extends JpaRepository<EmailModel, UUID> {
 
-    @Query("SELECT e.id , e.toMail,e.fromMail,e.subject FROM EmailModel e")
-    Page<EmailModel> getResumeEmails(Pageable pageable);
+    @Query("SELECT e.id, e.toMail,e.fromMail, e.subject FROM EmailModel e")
+    Page<Object> getResumeEmails(Pageable pageable);
 }

@@ -4,7 +4,7 @@ import com.zack.api.components.crypt.Hash;
 import com.zack.api.components.files.MailHtmlGenerator;
 import com.zack.api.components.utils.CacheUtils;
 import com.zack.api.dtos.*;
-import com.zack.api.infra.queue.producers.UserProducer;
+import com.zack.api.infra.queue.producers.MailProducer;
 import com.zack.api.models.UserModel;
 import com.zack.api.repositories.UserRepository;
 import com.zack.api.roles.UserRole;
@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
     @Autowired
     TokenService tokenService;
     @Autowired
-    UserProducer userProducer;
+    MailProducer userProducer;
     @Autowired
     Hash hash;
     @Autowired
@@ -85,30 +85,6 @@ public class UserService implements UserDetailsService {
     public UserData getMe() {
         UserModel user = getAuth();
         return new UserData(user);
-    }
-
-    public UserData getUser(UUID id) {
-        Optional<UserModel> user = userRepository.findById(id);
-
-        if (user.isEmpty()) {
-            throw new NotFoundException(GlobalResponses.USER_NOT_FOUND.getText());
-        }
-        return new UserData(user.get());
-    }
-
-    public List<UserData> getAllUsers(int page, int size) {
-        UserModel user = getAuth();
-        Pageable pageable = PageRequest.of(page, size);
-        Page<UserModel> users = userRepository.findAll(pageable);
-        List<UserData> formatUsers = new ArrayList<>();
-
-        users.forEach(userDb -> {
-            if (!Objects.equals(user.getId(), userDb.getId())) {
-                formatUsers.add(new UserDataForAdm(userDb));
-            }
-        });
-
-        return formatUsers;
     }
 
     public Response updateUser(UserUpdateDto data) throws IOException {
@@ -190,7 +166,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    private UserModel getAuth() {
+    public UserModel getAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
@@ -266,7 +242,6 @@ public class UserService implements UserDetailsService {
         userProducer.publishMessageMail(emailSendDto);
 
     }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findOneByUsername(username);

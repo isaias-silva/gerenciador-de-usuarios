@@ -5,6 +5,11 @@ import com.zack.api.models.EmailModel;
 import com.zack.api.models.UserModel;
 import com.zack.api.repositories.EmailRepository;
 import com.zack.api.repositories.UserRepository;
+import com.zack.api.util.exceptions.NotFoundException;
+import com.zack.api.util.responses.bodies.MailData;
+import com.zack.api.util.responses.bodies.MailDataDetails;
+import com.zack.api.util.responses.bodies.Response;
+import com.zack.api.util.responses.enums.GlobalResponses;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EmailService {
@@ -25,6 +32,7 @@ public class EmailService {
     EmailRepository emailRepository;
     @Autowired
     UserRepository userRepository;
+
     final JavaMailSender mailSender;
 
     public EmailService(JavaMailSender mailSender) {
@@ -55,10 +63,40 @@ public class EmailService {
         }
     }
 
-    public List<EmailModel> getMails(int page, int size){
+    public List<MailData> getMails(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<EmailModel> emailsDb= emailRepository.getResumeEmails(pageable);
-        return new ArrayList<>(emailsDb.getContent());
+        Page<Object> emailsDb = emailRepository.getResumeEmails(pageable);
+        List<MailData> formatMails = new ArrayList<>();
+
+        emailsDb.getContent().forEach(model -> {
+            formatMails.add(new MailData(model));
+        });
+
+        return formatMails;
+    }
+
+    public MailDataDetails getMailDetails(UUID id) {
+        Optional<EmailModel> emailModel = emailRepository.findById(id);
+        if (emailModel.isEmpty()) {
+            throw new NotFoundException(GlobalResponses.EMAIL_NOT_FOUND.getText());
+        } else {
+            var email = emailModel.get();
+            return new MailDataDetails(email.getId(),
+                    email.getSubject(),
+                    email.getToMail(),
+                    email.getFromMail(),
+                    email.getContent());
+        }
+
+    }
+    public Response deleteMail(UUID id){
+        Optional<EmailModel> emailExist = emailRepository.findById(id);
+        if (emailExist.isEmpty()) {
+            throw new NotFoundException(GlobalResponses.EMAIL_NOT_FOUND.getText());
+        }else{
+            emailRepository.delete(emailExist.get());
+            return new Response(GlobalResponses.EMAIL_DELETED.getText());
+        }
     }
 
     private void saveMail(String to, String subject, StringBuilder content) {

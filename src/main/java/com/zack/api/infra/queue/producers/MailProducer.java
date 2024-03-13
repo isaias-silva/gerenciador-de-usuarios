@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserProducer {
+public class MailProducer {
     @Value("${broker.queue.email.name}")
     private String mailQueue;
     final RabbitTemplate rabbitTemplate;
-    public UserProducer(RabbitTemplate rabbitTemplate){
+    public MailProducer(RabbitTemplate rabbitTemplate){
         this.rabbitTemplate=rabbitTemplate;
     }
 
