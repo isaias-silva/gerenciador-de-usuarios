@@ -26,7 +26,7 @@ public class OpenApi3Config {
     public GroupedOpenApi userGroup() {
         return GroupedOpenApi.builder()
                 .group("user-api")
-                .displayName("user API")
+                .displayName("user endpoints")
                 .pathsToMatch( "/user/**")
                 .build();
     }
@@ -34,7 +34,7 @@ public class OpenApi3Config {
     public GroupedOpenApi admGroup() {
         return GroupedOpenApi.builder()
                 .group("adm-api")
-                .displayName("adm API")
+                .displayName("adm endpoints")
                 .pathsToMatch( "/adm/**")
                 .build();
     }

@@ -22,7 +22,7 @@ public enum GlobalResponses {
     MAIL_CHANGE_INIT("foi enviado para seu novo e-mail um código de verificação."),
     EMAIL_NOT_FOUND("e-mail não encontrado"),
     EMAIL_DELETED("e-mail deletado da sua caixa de e-mail."),
-    EMAIL_SEND("e-mail enviado!");
+    EMAIL_SEND("e-mail enviado!"), INVALID_ROLE("classe de usuário inválida ");
 
     private final String text;
     GlobalResponses(String text) {

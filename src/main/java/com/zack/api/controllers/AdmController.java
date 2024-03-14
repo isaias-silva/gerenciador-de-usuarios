@@ -1,6 +1,7 @@
 package com.zack.api.controllers;
 
 import com.zack.api.dtos.EmailSendToUserDto;
+import com.zack.api.dtos.UserChangeRoleDto;
 import com.zack.api.models.EmailModel;
 import com.zack.api.services.AdmService;
 import com.zack.api.services.EmailService;
@@ -58,6 +59,21 @@ public class AdmController {
         return ResponseEntity.ok().body(admService.getUser(id));
     }
 
+    @PostMapping("/users/change/role")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(description = "troca a classe do usuário(promove, rebaixa ou bane)",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "dados dos usuários."),
+                    @ApiResponse(responseCode = "400", description = "erro no corpo da requisição.", content = @Content(schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(responseCode = "500", description = "erro interno na aplicação.", content = @Content(schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(responseCode = "404", description = "usuário não encontrado.", content = @Content(schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(responseCode = "403", description = "usuário não autorizado.", content = @Content(schema = @Schema(implementation = Response.class))),
+            })
+    public ResponseEntity<Response> changeRoleUser(@RequestBody @Valid UserChangeRoleDto userChangeRoleDto) throws NotFoundException, IOException {
+        return ResponseEntity.ok().body(admService.changeRoleUser(userChangeRoleDto));
+    }
+
+
 
     @GetMapping("/emails")
     @SecurityRequirement(name = "bearerAuth")
@@ -71,6 +87,9 @@ public class AdmController {
     public ResponseEntity<List<MailData>> getMails(@RequestParam(name = "page", required = true) int page, @RequestParam(name = "size", required = true) int size) throws NotFoundException {
         return ResponseEntity.ok().body(mailService.getMails(page,size));
     }
+
+
+
     @GetMapping("/emails/{id}")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(description = "busca emails enviados.",
@@ -98,5 +117,20 @@ public class AdmController {
             })
     public ResponseEntity<Response> sendMail(@RequestBody @Valid EmailSendToUserDto emailSendToUserDto) throws NotFoundException, IOException {
         return ResponseEntity.ok().body(admService.sendEmailToUser(emailSendToUserDto));
+    }
+
+    @DeleteMapping("/emails/{id}/delete")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(description = "exclui um e-mail do banco de dados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "email excluído"),
+                    @ApiResponse(responseCode = "400", description = "erro no corpo da requisição.", content = @Content(schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(responseCode = "500", description = "erro interno na aplicação.", content = @Content(schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(responseCode = "403", description = "usuário não autorizado.", content = @Content(schema = @Schema(implementation = Response.class))),
+                    @ApiResponse(responseCode = "404", description = "usuário não encontrado", content = @Content(schema = @Schema(implementation = Response.class))),
+
+            })
+    public ResponseEntity<Response> deleteMail(@PathVariable UUID id) throws NotFoundException, IOException {
+        return ResponseEntity.ok().body(mailService.deleteMail(id));
     }
 }

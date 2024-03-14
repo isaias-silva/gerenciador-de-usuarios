@@ -14,11 +14,10 @@ import java.util.*;
 @Table(name = "USERS")
 
 public class UserModel implements Serializable, UserDetails {
-    private static final long serialId = 3L;
+    private static final long serialId = 4L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-
     @Column
     private String name;
     @Column
@@ -29,7 +28,6 @@ public class UserModel implements Serializable, UserDetails {
     private String password;
     @Column
     private String resume;
-
     @Column
     private UserRole role;
     @Column
@@ -51,10 +49,14 @@ public class UserModel implements Serializable, UserDetails {
             case USER -> {
                 return List.of(new SimpleGrantedAuthority("ROLE_USER"));
             }
-            default -> {
+            case VERIFY_MAIL -> {
                 return List.of(new SimpleGrantedAuthority("ROLE_VERIFY_MAIL"));
 
             }
+            default -> {
+                return List.of(new SimpleGrantedAuthority("ROLE_BANNED"));
+            }
+
         }
 
     }

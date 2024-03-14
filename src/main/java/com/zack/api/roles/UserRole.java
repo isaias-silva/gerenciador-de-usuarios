@@ -4,7 +4,9 @@ public enum UserRole {
 
     USER("user"),
     ADMIN("admin"),
-   VERIFY_MAIL("verify_mail");
+   VERIFY_MAIL("verify_mail"),
+
+    BANNED("banned");
 
     public String getRole() {
         return role;
