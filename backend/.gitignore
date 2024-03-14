@@ -1,6 +1,6 @@
-HELP.md
+api1/HELP.md
 target/
-!.mvn/wrapper/maven-wrapper.jar
+!../../.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -36,8 +36,7 @@ build/
 /database
 /rabbitmq
 
-public/files/*.png
-public/files/*.jpg
-public/files/*.jpeg
-public/files/*.gif
+api1/public/files/*.png
+api1/public/files/*.jpg
+api1/public/files/*.gif
 *.env

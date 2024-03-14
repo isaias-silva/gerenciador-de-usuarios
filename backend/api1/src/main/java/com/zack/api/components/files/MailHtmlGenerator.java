@@ -1,8 +1,11 @@
 package com.zack.api.components.files;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -12,14 +15,16 @@ import java.util.Optional;
 public class MailHtmlGenerator {
 
     private final Path path;
+    private static final Logger logger = LoggerFactory.getLogger(MailHtmlGenerator.class);
 
     MailHtmlGenerator() {
-        path = Paths.get("")
-                .toAbsolutePath()
-                .resolve("src")
-                .resolve("main")
-                .resolve("resources")
-                .resolve("mail-templates");
+        path = Paths.get("src","main","resources","mail-templates");
+        logger.info(" file path of mail templates: "+path.toAbsolutePath().toString());
+
+        if(!Files.exists(path)){
+            throw new RuntimeException("file path not found");
+        }
+
 
     }
 
