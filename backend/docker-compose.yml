@@ -1,9 +1,25 @@
 version: '3.1'
 
 services:
+
+
+  api1:
+    build:
+      context: ./api1
+      dockerfile: dockerfile
+    ports:
+      - ${API1_PORT}:${API1_PORT}
+    networks:
+      - MediaCodec
+    depends_on:
+      - db
+      - rabbitmq
+      - redis
+
   db:
     image: mysql:8.0.31
     restart: always
+    hostname: mediacodec-data
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_PASS}
       MYSQL_DATABASE: ${MYSQL_DATA}
@@ -26,6 +42,7 @@ services:
   redis:
     image: redis:latest
     restart: always
+    hostname: mediacodec-cache
     ports:
       - '${REDIS_PORT}:6379'
     networks:
@@ -34,7 +51,7 @@ services:
   rabbitmq:
     image: rabbitmq:management
     restart: always
-
+    hostname: mediacodec-amqp
     ports:
       - '5673:5672'
       - '15673:15672'
@@ -46,6 +63,8 @@ services:
       RABBITMQ_DEFAULT_PASS: ${MQ_PASS}
     networks:
       - MediaCodec
+
+
 
 networks:
   MediaCodec:
