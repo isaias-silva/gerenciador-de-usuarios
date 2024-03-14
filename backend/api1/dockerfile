@@ -4,11 +4,10 @@ WORKDIR /app
 
 COPY . .
 COPY .env .
-
 RUN apt-get update && apt-get install maven -y
-
 RUN mvn clean package -DskipTests
-EXPOSE 8081
+EXPOSE ${PORT}
+
 
 CMD ["java", "-jar", "target/api-0.0.1-SNAPSHOT.jar"]
 
