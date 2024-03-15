@@ -16,7 +16,7 @@ services:
       - rabbitmq
       - redis
     volumes:
-      - ./uploads:/app/public/
+      - ./uploads:/app/public/files
   db:
     image: mysql:8.0.31
     restart: always

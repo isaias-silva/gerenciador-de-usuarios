@@ -25,7 +25,14 @@ public class UploadService {
     private final List<String> VALID_PROFILE_TYPES= Arrays.asList("jpg","png","jpeg");
     @Autowired
     UserRepository userRepository;
-    public Response generateFileProfileInServer(InputStream file, String filename) throws IOException{
+
+    private Path pathUpload;
+
+    UploadService(){
+        pathUpload= Paths.get("").toAbsolutePath().resolve("public").resolve("files");
+
+    }
+    public Response generateFileProfileInServer(InputStream fileInput, String filename) throws IOException{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
@@ -38,14 +45,24 @@ public class UploadService {
                 throw new BadRequestException(GlobalResponses.ONLY_IMAGES.getText());
             }
 
-            Path pathUpload= Paths.get("").toAbsolutePath().resolve("public").resolve("files");
+            System.out.println(pathUpload);
             String realNameFile=user.getId() +".png";
             String filePath=pathUpload+"/"+realNameFile;
 
+            System.out.println(filePath);
+                    File file = new File(filePath);
+                    if (!file.exists()) {
+                        boolean created = file.createNewFile();
+                        if (created) {
+                            System.out.println("File created successfully: " + filePath);
+                        } else {
+                            System.out.println("Error creating file: " + filePath);
+                        }
+                    }
                 OutputStream outputStream = new FileOutputStream(filePath);
                 byte[] buffer = new byte[1024];
                 int length;
-                while ((length = file.read(buffer)) != -1) {
+                while ((length = fileInput.read(buffer)) != -1) {
                     System.out.println("file upload: " + length / 1024 + "kb");
                     outputStream.write(buffer, 0, length);
                 }

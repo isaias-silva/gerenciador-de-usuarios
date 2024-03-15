@@ -4,8 +4,12 @@ WORKDIR /app
 
 COPY . .
 COPY .env .
+
 RUN apt-get update && apt-get install maven -y
+
 RUN mvn clean package -DskipTests
+
+COPY public .
 EXPOSE ${PORT}
 
 
