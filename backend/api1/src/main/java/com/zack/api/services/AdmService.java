@@ -85,7 +85,6 @@ public class AdmService {
         return new Response(GlobalResponses.EMAIL_SEND.getText());
     }
 
-
     private void sendMailAdmForQueue(String userMail, String userName, String subject, String content) throws IOException {
 
         String htmlContent = mailHtmlGenerator.generatorMailFile(userName, content, Optional.empty());
