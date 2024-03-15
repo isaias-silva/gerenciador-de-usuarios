@@ -28,10 +28,10 @@ public class SecurityConfig {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable).sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ).authorizeHttpRequests(auth ->
-                auth.requestMatchers(HttpMethod.PUT, "/user/update/**").hasRole("USER")
+                auth.requestMatchers("/adm/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/user/update/**").hasRole("USER")
                         .requestMatchers(HttpMethod.PUT, "/user/validate").hasRole("VERIFY_MAIL")
-                        .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("ADMIN","USER","VERIFY_MAIL","BANNED")
-                        .requestMatchers("/adm/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("ADMIN", "USER", "VERIFY_MAIL", "BANNED")
                         .requestMatchers(HttpMethod.PUT, "/user/change/password/forgotten").permitAll()
                         .anyRequest().permitAll()
         ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
