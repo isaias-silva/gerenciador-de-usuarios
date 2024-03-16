@@ -4,6 +4,7 @@ services:
 
 
   api1:
+    restart: always
     build:
       context: ./api1
       dockerfile: dockerfile

@@ -1,5 +1,5 @@
-<div class="  text-light-font">
-    <app-header></app-header>
+<div [attr.data-mode]="globalMode" class="dark:text-dark-font dark:bg-bck-dark text-light-font bg-bck-light">
+  <app-theme-control (themeChange)="onChangeTheme($event)"></app-theme-control>
     <div>
         <router-outlet></router-outlet>
     </div>

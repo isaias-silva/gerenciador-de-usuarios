@@ -1,0 +1,10 @@
+<div class="fixed top-0 left-0 px-1 rounded-xl ">
+    <label for="checktheme"
+        class="w-12 h-[20px] block bg-component-dark-color m-0 relative  rounded-2xl cursor-pointer">
+        <div
+            [className]="' transition-all duration-200 w-[20px] h-[20px] absolute top-0 rounded-full shadow-lg '+(darkMode? ' bg-blue-300 dark:shadow-blue-400 mx-0':' bg-yellow-300 dark:shadow-yellow-400 mx-7')">
+        </div>
+    </label>
+    <input class=" invisible inline" type="checkbox" id="checktheme" [checked]="darkMode" (change)="changeMode($event)">
+
+</div>

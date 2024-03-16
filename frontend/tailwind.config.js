@@ -8,13 +8,21 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "base-color": "#4caf50",
-
+       
+     
+        "bck-light": " #a5e6a888",
+        "component-ligth-color": "#f3f4f6",
         "light-font": '#1F1F1F',
+        
+    
+
+        "bck-dark": "#004216ce",
+        "component-dark-color":'#2a2a2a90',
         "dark-font": '#fff',
-        "hover-font": "#37BB3B"
+        
 
-
+        "base-color": "#4caf50",
+        "hover-font": "#37BB3B",
 
       },
     }
