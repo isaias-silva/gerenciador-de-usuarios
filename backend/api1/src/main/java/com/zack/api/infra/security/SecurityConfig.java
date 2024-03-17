@@ -25,7 +25,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable).sessionManagement(
+
+        httpSecurity.csrf(AbstractHttpConfigurer::disable).sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         ).authorizeHttpRequests(auth ->
                 auth.requestMatchers("/adm/**").hasRole("ADMIN")
@@ -34,7 +35,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/user/**").hasAnyRole("ADMIN", "USER", "VERIFY_MAIL", "BANNED")
                         .requestMatchers(HttpMethod.PUT, "/user/change/password/forgotten").permitAll()
                         .anyRequest().permitAll()
-        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
+        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
     @Bean

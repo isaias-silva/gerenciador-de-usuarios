@@ -8,17 +8,17 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
   imports: [MatIconModule, MatSlideToggleModule],
   templateUrl: './theme-control.component.html',
 })
-export class ThemeControlComponent implements OnInit{
-  @Output() themeChange:EventEmitter<boolean>=new EventEmitter();
- 
-  darkMode: boolean = false;
+export class ThemeControlComponent implements OnInit {
+  @Output() themeChange: EventEmitter<boolean> = new EventEmitter();
 
- 
+  darkMode?: boolean;
+
+
   ngOnInit(): void {
     const theme = localStorage.getItem('theme')
-    if (theme) {
-      this.darkMode = true
-    }
+
+    this.darkMode = theme ? true : false
+
     this.themeChange.emit(this.darkMode)
   }
 

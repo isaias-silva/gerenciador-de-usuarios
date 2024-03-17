@@ -11,7 +11,9 @@ import { ThemeControlComponent } from "./components/theme-control/theme-control.
 })
 export class AppComponent {
   title = 'frontend';
+ 
   globalMode: 'dark' | 'light' = 'light'
+  
   onChangeTheme(dark:boolean) {
    this.globalMode=dark?'dark':'light'
   }

@@ -1,10 +1,13 @@
-<form action="/login" method="post" class="space-y-4 w-full text-center">
+<form [formGroup]="form" (ngSubmit)="submitForm()" class="space-y-4 w-full text-center">
+    <div *ngIf="errors.length>0">
+        <p class="bg-red-300 text-red-600 p-2 rounded-lg my-1" *ngFor="let error of errors">{{error}}</p>
+    </div>
     <div class="w-full flex-col ">
-        <input placeholder="seu e-mail" type="text" name="username" id="username"
+        <input placeholder="seu e-mail" type="email" #mail [formControl]="form.controls.mail"
             class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
 
 
-        <input placeholder="sua senha" type="password" name="password" id="password"
+        <input placeholder="sua senha" type="password" #pass [formControl]="form.controls.password"
             class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
 
     </div>
@@ -19,7 +22,7 @@
     </button>
 
     <p class="text-sm mt-4">
-       É novo aqui? <a href="#" class="text-base-color hover:underline">Cadastre-se</a>
+       É novo aqui? <a href="#" class="text-base-color hover:underline">cadastre-se</a>
     </p>
   <div>
     <ul class="flex justify-center">
