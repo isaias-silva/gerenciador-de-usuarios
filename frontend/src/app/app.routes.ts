@@ -6,11 +6,11 @@ import { isNotLoginGuard } from './guards/is-not-login.guard';
 
 export const routes: Routes = [
     {
-        path: 'sign', component: LoginAndRegisterComponent, canActivate:[isNotLoginGuard]
+        path: 'sign', component: LoginAndRegisterComponent, canActivate: [isNotLoginGuard]
     },
     {
         path: '', canActivate: [isLoginGuard],
         component: HomeComponent,
-        children:[]
+        children: [{ path: 'test', component: LoginAndRegisterComponent, }]
     }
 ];

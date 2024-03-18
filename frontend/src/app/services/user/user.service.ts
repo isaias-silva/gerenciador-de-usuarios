@@ -19,11 +19,12 @@ export class UserService {
         return this.http.get<Iuser>(`${this.apiUrl}/user/me`, { headers: { "authorization": `Bearer ${this.getToken()}` } })
         .pipe( catchError((err, caught) => {
             localStorage.removeItem('auth-token')
-            return ''
+           throw err
           }))
     }
      getToken() {
         return localStorage.getItem('auth-token')
 
     }
+    
 }

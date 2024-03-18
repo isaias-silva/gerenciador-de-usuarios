@@ -10,7 +10,7 @@ module.exports = {
       colors: {
        
      
-        "bck-light": " #a5e6a888",
+        "bck-light": "#ffffff88",
         "component-ligth-color": "#f3f4f6",
         "component-ligth-color-2": "#a4a4a4",
         
@@ -26,6 +26,7 @@ module.exports = {
 
         "base-color": "#4caf50",
         "hover-font": "#37BB3B",
+        "invisible-component-color":'#00000019'
 
       },
     }
