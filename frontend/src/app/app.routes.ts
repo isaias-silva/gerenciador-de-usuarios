@@ -5,6 +5,7 @@ import { isLoginGuard } from './guards/is-login.guard';
 import { isNotLoginGuard } from './guards/is-not-login.guard';
 import { HomeTemplateComponent } from './components/templates/home.template/home.template.component';
 import { HomeComponent } from './pages/home/home.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 
 export const routes: Routes = [
     {
@@ -13,6 +14,8 @@ export const routes: Routes = [
     {
         path: '', canActivate: [isLoginGuard],
         component: HomeTemplateComponent,
-        children: [{ path: '', component: HomeComponent, }]
+        children: [{ path: '', component: HomeComponent},
+        { path: 'profile', component: ProfileComponent}
+    ]
     }
 ];

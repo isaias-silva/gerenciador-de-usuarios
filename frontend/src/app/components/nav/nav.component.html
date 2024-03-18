@@ -1,20 +1,20 @@
 <nav class="w-1/5 h-1/2  rounded-lg bg-invisible-component-color absolute left-0 top-20 z-20">
     <div class="text-center mb-2">
-        <a href="#">
-            <img class=" transition-all duration-200 w-[80px] h-[80px] m-auto my-2 da border-1 rounded-full hover:scale-105" src="assets/icons/unknown_user.jpg"
-                alt="unknow_user">
+        <a routerLink="/profile">
+            <img class=" transition-all duration-200 w-[80px] h-[80px] m-auto my-2 da border-1 rounded-full hover:scale-105"
+                [src]="userInfo?.profile|| 'assets/icons/unknown_user.jpg'" alt="unknow_user">
             <h4 class="text-xl transition-all duration-200 hover:text-base-color">{{userInfo?.name}}</h4>
             <span class="block transition-all duration-200 text-gray-600 dark:text-gray-200">{{userInfo?.mail}}</span>
         </a>
 
     </div>
-   
+
     <ul class="text-center">
         <li *ngIf="userInfo?.githubURL"><a target="_blank" [href]="userInfo?.githubURL">Github</a></li>
         <li *ngIf="userInfo?.portfolioURL"><a target="_blank" [href]="userInfo?.portfolioURL">Website</a></li>
         <li *ngIf="userInfo?.instagramURL"><a target="_blank" [href]="userInfo?.instagramURL">Instagram</a></li>
     </ul>
-    
+
     <hr class="my-2">
     <div class="flex justify-center items-center">
         <a routerLink="/sign" (click)="logout()"
