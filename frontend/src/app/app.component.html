@@ -1,8 +1,4 @@
-<div [attr.data-mode]="globalMode" class="dark:text-dark-font dark:bg-bck-dark text-light-font bg-bck-light">
+<div [attr.data-mode]="globalMode" class="dark:text-dark-font  text-light-font dark:bg-bck-dark bg-bck-light">
   <app-theme-control (themeChange)="onChangeTheme($event)"></app-theme-control>
-
-    <div>
-        <router-outlet></router-outlet>
-    </div>
-   
+  <router-outlet class=""></router-outlet>
 </div>
