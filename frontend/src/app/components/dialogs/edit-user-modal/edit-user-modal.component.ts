@@ -7,6 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { Iuser } from '../../../interfaces/api/user.data.interface';
 import { ProfileChangerComponent } from "../../profile-changer/profile-changer.component";
 import { IupdateUser } from '../../../interfaces/api/user.update.interface';
+import { UserService } from '../../../services/user/user.service';
 
 
 @Component({
@@ -17,10 +18,11 @@ import { IupdateUser } from '../../../interfaces/api/user.update.interface';
   imports: [MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatDialogModule, ProfileChangerComponent]
 })
 export class EditUserModalComponent implements OnInit {
-  constructor(matDialogRef: MatDialogRef<EditUserModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Iuser) {
+  constructor(private matDialogRef: MatDialogRef<EditUserModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Iuser, private userService: UserService) {
 
   }
+ 
   form = new FormGroup({
     name: new FormControl(this.data.name),
     mail: new FormControl(this.data.mail),
@@ -37,15 +39,15 @@ export class EditUserModalComponent implements OnInit {
     if (this.form.invalid) {
       return
     }
-    const updateObject: IupdateUser = {
-      name:this.compare("name"),
-      mail:this.compare("mail"),
+    const updateObject = {
+      name: this.compare("name"),
+      mail: this.compare("mail"),
       resume: this.compare("resume"),
-      githubURL:this.compare("githubURL"),
-      instagramURL:this.compare("instagramURL"),
-      portfolioURL:this.compare("portfolioURL")
+      githubURL: this.compare("githubURL"),
+      instagramURL: this.compare("instagramURL"),
+      portfolioURL: this.compare("portfolioURL")
     }
-    console.log(updateObject)
+    this.save(updateObject)
 
 
   }
@@ -53,8 +55,22 @@ export class EditUserModalComponent implements OnInit {
   private compare(key: "name" | "mail" | "githubURL" | "instagramURL" | "portfolioURL" | "resume") {
     if (this.data[key] != this.form.controls[key].value && this.form.controls[key].value) {
       return this.form.controls[key].value
-    }else{
+    } else {
       return null
+    }
+  }
+
+  save(updateObject:IupdateUser) {
+    if (updateObject){
+      this.userService.update(updateObject).subscribe({
+        next:(res)=>{
+          alert(res.message)
+        },
+        error(err){
+          console.log(err)
+        }
+      })
+      this.matDialogRef.close()
     }
   }
   ngOnInit(): void {

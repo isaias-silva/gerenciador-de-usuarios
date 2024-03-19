@@ -1,4 +1,4 @@
-export interface IResponseLogin {
+export interface IResponseAuth {
     message: string,
     token: string
 }

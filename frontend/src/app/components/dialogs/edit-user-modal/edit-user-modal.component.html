@@ -12,13 +12,13 @@
                 <div class="mb-4">
                     <label for="name" class="block text-base-color font-bold mb-2">Nome:</label>
                     <input [formControl]="form.controls.name" type="text" id="name" name="name"
-                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
+                        class="w-full bg-component-light-color dark:bg-component-dark-color-2 px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
                         placeholder="Digite seu nome" required>
                 </div>
                 <div class="mb-4">
                     <label for="mail" class="block text-base-color font-bold mb-2">E-mail:</label>
                     <input type="email" [formControl]="form.controls.mail" id="mail" name="mail"
-                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
+                        class="w-full bg-component-light-color dark:bg-component-dark-color-2 px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
                         placeholder="Digite seu e-mail" required>
                 </div>
             </div>
@@ -28,20 +28,20 @@
                     <label class="block text-base-color font-bold mb-2">Redes Sociais:</label>
                     <input type="url" id="githubURL" name="githubURL"
                     [formControl]="form.controls.githubURL"
-                        class="w-[80%] px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font mb-2"
+                        class="w-[80%] bg-component-light-color dark:bg-component-dark-color-2 px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font mb-2"
                         placeholder="Link para o GitHub (opcional)">
                     <input type="url" id="instagramURL"[formControl]="form.controls.instagramURL" name="instagramURL"
-                        class="w-[80%] px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font mb-2"
+                        class="w-[80%] bg-component-light-color dark:bg-component-dark-color-2 px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font mb-2"
                         placeholder="Link para o Instagram (opcional)">
                     <input type="url" id="portfolioURL" [formControl]="form.controls.portfolioURL" name="portfolioURL"
-                        class="w-[80%] px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
+                        class="w-[80%] bg-component-light-color dark:bg-component-dark-color-2 px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
                         placeholder="Link para o Portfólio (opcional)">
                 </div>
             </div>
 
             <div class="w-1/2">
                 <label class="block text-base-color font-bold mb-2">Sobre:</label>
-                <textarea class="border w-full h-32 rounded-lg p-2" [formControl]="form.controls.resume" placeholder="Escreva sobre você"></textarea>
+                <textarea class="border w-full bg-component-light-color dark:bg-component-dark-color-2 h-32 rounded-lg p-2" [formControl]="form.controls.resume" placeholder="Escreva sobre você"></textarea>
             </div>
 
             <div class="w-full flex justify-center items-center">

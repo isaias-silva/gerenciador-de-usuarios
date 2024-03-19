@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../enviroments/enviroment';
 import { HttpClient } from '@angular/common/http';
-import { IResponseLogin } from '../../interfaces/api/response.login.interface';
+import { IResponseAuth } from '../../interfaces/api/response.auth.interface';
 import { tap } from 'rxjs';
 import { IbodyLogin } from '../../interfaces/api/body.login.interface';
 
@@ -15,7 +15,7 @@ export class AuthService {
 
   login(body: IbodyLogin) {
 
-    return this.http.post<IResponseLogin>(`${this.apiUrl}/user/login`, body).pipe(tap((response) => {
+    return this.http.post<IResponseAuth>(`${this.apiUrl}/user/login`, body).pipe(tap((response) => {
 
       localStorage.setItem('auth-token', response.token)
 
