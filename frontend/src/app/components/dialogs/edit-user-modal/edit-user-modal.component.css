@@ -1,9 +1,13 @@
+
 ::ng-deep .modal {
-    padding: 5px;
+    padding: 10px;
     background-color: #fff;
+ 
+   
 }
 
 ::ng-deep .modal[data-mode='dark'] {
     background-color: #383838;
     color: #fff;
+
 }

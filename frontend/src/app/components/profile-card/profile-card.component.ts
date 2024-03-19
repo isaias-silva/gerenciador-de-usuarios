@@ -35,8 +35,8 @@ export class ProfileCardComponent implements OnInit {
 
   openDialog() {
     const openDialog = this.dialog.open(EditUserModalComponent, {
-      width: '80%',
-      height: '600px',
+      width: '60%',
+      height: '550px',
       
       data: this.userInfo
     })

@@ -1,6 +1,53 @@
-<div class="modal h-full" [attr.data-mode]="theme"> 
-    <h2>atualizar informações de {{data.name}}</h2>
- 
+<div class="modal h-full relative" [attr.data-mode]="theme">
+    <h2 class="text-2xl font-bold text-center text-base-color">Atualizar Informações de {{data.name}}</h2>
+   
+    <form [formGroup]="form" (ngSubmit)="submit()" class=" m-auto mt-4">
+        <div class="flex flex-wrap justify-between mt-10 mb-0 p-2">
 
+            <div class="w-1/2 mb-2">
+                <app-profile-changer [preview]="data.profile||'/assets/icons/unknown_user.jpg'"></app-profile-changer>
+            </div>
 
+            <div class="w-1/2">
+                <div class="mb-4">
+                    <label for="name" class="block text-base-color font-bold mb-2">Nome:</label>
+                    <input [formControl]="form.controls.name" type="text" id="name" name="name"
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
+                        placeholder="Digite seu nome" required>
+                </div>
+                <div class="mb-4">
+                    <label for="mail" class="block text-base-color font-bold mb-2">E-mail:</label>
+                    <input type="email" [formControl]="form.controls.mail" id="mail" name="mail"
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
+                        placeholder="Digite seu e-mail" required>
+                </div>
+            </div>
+
+            <div class="w-1/2">
+                <div class="mb-4">
+                    <label class="block text-base-color font-bold mb-2">Redes Sociais:</label>
+                    <input type="url" id="githubURL" name="githubURL"
+                    [formControl]="form.controls.githubURL"
+                        class="w-[80%] px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font mb-2"
+                        placeholder="Link para o GitHub (opcional)">
+                    <input type="url" id="instagramURL"[formControl]="form.controls.instagramURL" name="instagramURL"
+                        class="w-[80%] px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font mb-2"
+                        placeholder="Link para o Instagram (opcional)">
+                    <input type="url" id="portfolioURL" [formControl]="form.controls.portfolioURL" name="portfolioURL"
+                        class="w-[80%] px-3 py-2 border rounded-lg focus:outline-none focus:border-hover-font"
+                        placeholder="Link para o Portfólio (opcional)">
+                </div>
+            </div>
+
+            <div class="w-1/2">
+                <label class="block text-base-color font-bold mb-2">Sobre:</label>
+                <textarea class="border w-full h-32 rounded-lg p-2" [formControl]="form.controls.resume" placeholder="Escreva sobre você"></textarea>
+            </div>
+
+            <div class="w-full flex justify-center items-center">
+                <button type="submit"
+                        class="w-1/2 bg-base-color text-white font-bold py-2 px-4 rounded hover:bg-hover-font focus:outline-none">Atualizar</button>
+            </div>
+        </div>
+    </form>
 </div>
