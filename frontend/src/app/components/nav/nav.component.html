@@ -1,8 +1,11 @@
 <nav class="w-1/5 h-1/2  rounded-lg bg-invisible-component-color absolute left-0 top-20 z-20">
     <div class="text-center mb-2">
         <a routerLink="/profile">
-            <img class=" transition-all duration-200 w-[80px] h-[80px] m-auto my-2 da border-1 rounded-full hover:scale-105"
+            <div class="flex w-[100px] h-[100px] m-auto my-2 da border-1 rounded-full overflow-hidden">
+                <img class="w-full transition-all duration-200 hover:scale-150"
                 [src]="userInfo?.profile|| 'assets/icons/unknown_user.jpg'" alt="unknow_user">
+            
+            </div>
             <h4 class="text-xl transition-all duration-200 hover:text-base-color">{{userInfo?.name}}</h4>
             <span class="block transition-all duration-200 text-gray-600 dark:text-gray-200">{{userInfo?.mail}}</span>
         </a>
