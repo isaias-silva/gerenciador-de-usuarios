@@ -32,7 +32,6 @@ public class EmailService {
     EmailRepository emailRepository;
     @Autowired
     UserRepository userRepository;
-
     final JavaMailSender mailSender;
 
     public EmailService(JavaMailSender mailSender) {

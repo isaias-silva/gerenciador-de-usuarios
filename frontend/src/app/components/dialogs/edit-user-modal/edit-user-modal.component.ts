@@ -22,7 +22,7 @@ export class EditUserModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: Iuser, private userService: UserService) {
 
   }
- 
+
   form = new FormGroup({
     name: new FormControl(this.data.name),
     mail: new FormControl(this.data.mail),
@@ -33,7 +33,7 @@ export class EditUserModalComponent implements OnInit {
   })
 
   theme?: string | null
-
+  valid: boolean = false
 
   submit() {
     if (this.form.invalid) {
@@ -47,30 +47,39 @@ export class EditUserModalComponent implements OnInit {
       instagramURL: this.compare("instagramURL"),
       portfolioURL: this.compare("portfolioURL")
     }
-    this.save(updateObject)
 
+
+    this.save(updateObject)
+    console.log(updateObject)
 
   }
 
   private compare(key: "name" | "mail" | "githubURL" | "instagramURL" | "portfolioURL" | "resume") {
     if (this.data[key] != this.form.controls[key].value && this.form.controls[key].value) {
+      this.valid = true
       return this.form.controls[key].value
     } else {
       return null
     }
   }
 
-  save(updateObject:IupdateUser) {
-    if (updateObject){
+  save(updateObject: IupdateUser) {
+    
+
+    if (!this.valid) {
+      return
+    }
+    if (updateObject) {
       this.userService.update(updateObject).subscribe({
-        next:(res)=>{
+        next: (res) => {
           alert(res.message)
+
         },
-        error(err){
+        error(err) {
           console.log(err)
         }
       })
-      this.matDialogRef.close()
+
     }
   }
   ngOnInit(): void {

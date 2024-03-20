@@ -44,11 +44,13 @@ services:
   redis:
     image: redis:latest
     restart: always
-    hostname: mediacodec-cache
+    hostname: mediacodec+cache
+
     ports:
-      - '${REDIS_PORT}:6379'
+      - "${REDIS_PORT}:6379"
     networks:
       - MediaCodec
+
   rabbitmq:
     image: rabbitmq:management
     restart: always

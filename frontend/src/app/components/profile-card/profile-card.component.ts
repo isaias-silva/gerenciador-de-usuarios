@@ -5,8 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EditUserModalComponent } from '../dialogs/edit-user-modal/edit-user-modal.component';
-import { BehaviorSubject } from 'rxjs';
-import { IupdateUser } from '../../interfaces/api/user.update.interface';
+
 @Component({
   selector: 'app-profile-card',
   standalone: true,
@@ -30,13 +29,8 @@ export class ProfileCardComponent implements OnInit {
   }
 
   updateUserInfo() {
-    this.userService.me()
-    const { userSubject } = this.userService
-    userSubject.subscribe(v => {
-      console.log(v)
-      if (v) {
-        this.userInfo = v
-      }
+    this.userService.me().subscribe(v => {
+      this.userInfo = v
     })
   }
   openDialog() {
@@ -46,12 +40,15 @@ export class ProfileCardComponent implements OnInit {
 
       data: this.userInfo
     })
-    openDialog.afterClosed().subscribe({
-      next: () => {
-      
-       
-        this.updateUserInfo()
-      }
+    openDialog.afterClosed().subscribe((reload: boolean) => {
+
+      if (reload)
+        location.reload()
     })
+
+
+
+
+
   }
 }
