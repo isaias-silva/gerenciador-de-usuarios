@@ -7,9 +7,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.zack.api.models.UserModel;
 import com.zack.api.util.responses.enums.GlobalResponses;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.UUID;
 

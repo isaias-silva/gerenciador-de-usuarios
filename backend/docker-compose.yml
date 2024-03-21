@@ -14,8 +14,8 @@ services:
       - MediaCodec
     depends_on:
       - db
-      - rabbitmq
-      - redis
+      - messaging
+      - cache
     volumes:
       - ./uploads:/app/public/files
   db:
@@ -41,17 +41,15 @@ services:
     networks:
       - MediaCodec
 
-  redis:
+  cache:
     image: redis:latest
     restart: always
-    hostname: mediacodec+cache
-
     ports:
       - "${REDIS_PORT}:6379"
     networks:
       - MediaCodec
 
-  rabbitmq:
+  messaging:
     image: rabbitmq:management
     restart: always
     hostname: mediacodec-amqp
