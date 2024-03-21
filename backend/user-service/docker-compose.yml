@@ -3,15 +3,14 @@ version: '3.1'
 services:
 
 
-  api1:
+  api:
     restart: always
     build:
-      context: ./api1
       dockerfile: dockerfile
     ports:
-      - ${API1_PORT}:${API1_PORT}
+      - ${PORT}:${PORT}
     networks:
-      - MediaCodec
+      - mediacodec-user-manager
     depends_on:
       - db
       - messaging
@@ -30,7 +29,7 @@ services:
     ports:
       - "3307:3306"
     networks:
-      - MediaCodec
+      - mediacodec-user-manager
 
   phpmyadmin:
     image: phpmyadmin
@@ -39,7 +38,7 @@ services:
     environment:
       - PMA_ARBITRARY=1
     networks:
-      - MediaCodec
+      - mediacodec-user-manager
 
   cache:
     image: redis:latest
@@ -47,7 +46,7 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     networks:
-      - MediaCodec
+      - mediacodec-user-manager
 
   messaging:
     image: rabbitmq:management
@@ -63,10 +62,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${MQ_USER}
       RABBITMQ_DEFAULT_PASS: ${MQ_PASS}
     networks:
-      - MediaCodec
-
-
+      - mediacodec-user-manager
 
 networks:
-  MediaCodec:
+  mediacodec-user-manager:
     driver: bridge

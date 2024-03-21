@@ -37,6 +37,7 @@ build/
 /rabbitmq
 /uploads
 
+
 api1/public/files/*.png
 api1/public/files/*.jpg
 api1/public/files/*.gif
