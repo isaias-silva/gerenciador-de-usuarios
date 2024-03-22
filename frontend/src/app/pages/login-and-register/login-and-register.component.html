@@ -2,8 +2,11 @@
     <div
         class="w-[30%]  dark:bg-component-dark-color bg-component-ligth-color p-4 shadow-xl flex flex-col justify-center items-center">
        
-        <h1 class="text-2xl font-bold mb-5">Olá! é bom ter você por aqui!</h1>
-        <app-auth />
+        <h1 class="text-2xl font-bold mb-5 text-center">{{register?'Cadastre-se pra iteragir na MediaCodec!':'Olá! é bom ter você por aqui!'}}</h1>
+        
+        <app-auth *ngIf="!register"/>
+        <app-register *ngIf="register"/>
+    
     </div>
     <img class="w-[70%] opacity-30" src="assets/banner.jpeg" alt="">
 

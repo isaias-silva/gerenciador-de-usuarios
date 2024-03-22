@@ -1,0 +1,37 @@
+<form class="space-y-4 w-full text-center" (ngSubmit)="submitForm()" [formGroup]="form">
+
+    <div class="w-full flex-col ">
+        <input placeholder="seu nome" type="text" [formControl]="form.controls.name"
+            class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
+
+
+        <input placeholder="seu e-mail" type="email" [formControl]="form.controls.mail"
+            class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
+
+
+        <input placeholder="sua senha" type="password" [formControl]="form.controls.password"
+            class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
+
+        <input placeholder="repita sua senha" type="password" [formControl]="form.controls.passwordRepite"
+            class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
+
+    </div>
+
+    <button type="submit" class=" bg-base-color p-2 w-[70%] m-auto text-white rounded shadow-lg hover:bg-hover-font">
+        cadastre-se
+    </button>
+
+    <p class="text-sm mt-4">
+        já possui conta? <a routerLink="/login" class="text-base-color hover:underline">entre</a>
+    </p>
+    <div>
+        <ul class="flex justify-center">
+            <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110"
+                        src="assets/icons/github.png" alt=""></a></li>
+            <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110"
+                        src="assets/icons/google.png" alt=""></a></li>
+            <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110"
+                        src="assets/icons/discord.png" alt=""></a></li>
+        </ul>
+    </div>
+</form>

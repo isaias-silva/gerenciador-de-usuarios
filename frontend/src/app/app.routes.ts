@@ -9,7 +9,10 @@ import { ProfileComponent } from './pages/profile/profile.component';
 
 export const routes: Routes = [
     {
-        path: 'sign', component: LoginAndRegisterComponent, canActivate: [isNotLoginGuard]
+        path: 'login', component: LoginAndRegisterComponent, canActivate: [isNotLoginGuard]
+    },
+    {
+        path: 'register', component: LoginAndRegisterComponent, canActivate: [isNotLoginGuard]
     },
     {
         path: '', canActivate: [isLoginGuard],

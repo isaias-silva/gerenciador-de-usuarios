@@ -4,13 +4,13 @@ import { IformUser } from '../../../interfaces/components/form.user.interface';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/user/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule,RouterModule],
   templateUrl: './auth.component.html',
 
 })

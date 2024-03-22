@@ -7,7 +7,7 @@ export const isLoginGuard: CanActivateFn = async (route, state) => {
   const userService = inject(UserService)
 
   if (!userService.getToken()) {
-    router.navigate(['/sign'])
+    router.navigate(['/login'])
     return false
   }
   return true
