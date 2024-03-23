@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.URL;
 
 public record UserUpdateDto(
-        @Size(min = 3, message = "nome muito curto, use no mínimo 4 dígitos") @Size(max = 21, message = "nome muito grande, use no máximo 20 dígitos")
+        @Size(min = 3, message = "nome muito curto, use no mínimo 4 dígitos") @Size(max = 11, message = "nome muito grande, use no máximo 10 dígitos")
         String name,
 
         @Email(message = "e-mail inválido")

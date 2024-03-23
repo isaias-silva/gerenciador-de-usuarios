@@ -32,10 +32,7 @@ export class UserService {
     }
 
     update(doc: IupdateUser) {
-        console.log('---------------------')
-        console.log(doc)
-        console.log('---------------------')
-        
+      
         return this.http.put<IResponseAuth>(`${this.apiUrl}/user/update`, doc, { headers: { "authorization": `Bearer ${this.getToken()}` } })
 
 
@@ -48,6 +45,7 @@ export class UserService {
         return this.http.put<IResponseAuth>(`${this.apiUrl}/user/update/profile`, formData, { headers: { "authorization": `Bearer ${this.getToken()}` } })
     }
 
+    
     getToken() {
         return localStorage.getItem('auth-token')
 

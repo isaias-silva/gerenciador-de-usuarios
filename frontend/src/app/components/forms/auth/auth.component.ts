@@ -5,12 +5,13 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../services/user/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
+import { ViewPasswordComponent } from '../../utils/view-password/view-password.component';
 
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule,RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterModule, ViewPasswordComponent],
   templateUrl: './auth.component.html',
 
 })
@@ -29,9 +30,9 @@ export class AuthComponent implements IformUser {
   errors: string[] = []
 
   errorClasses: string[] = ['border-red-300', 'border-2'];
+
+  visiblePassword: boolean = false
   submitForm() {
-
-
     if (this.form.invalid) {
       return this.drawErrors()
     }
@@ -77,4 +78,7 @@ export class AuthComponent implements IformUser {
     })
   }
 
+  changeVisibility(visible: boolean) {
+    this.visiblePassword=visible
+  }
 }

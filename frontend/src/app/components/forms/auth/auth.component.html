@@ -2,33 +2,36 @@
     <div *ngIf="errors.length>0">
         <p class="bg-red-300 text-red-600 p-2 rounded-lg my-1" *ngFor="let error of errors">{{error}}</p>
     </div>
-    <div class="w-full flex-col ">
+    <div class="w-full flex-col relative">
         <input placeholder="seu e-mail" type="email" #mail [formControl]="form.controls.mail"
             class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
 
 
-        <input placeholder="sua senha" type="password" #pass [formControl]="form.controls.password"
+        <input placeholder="sua senha" [type]="visiblePassword?'text':'password'" #pass [formControl]="form.controls.password"
             class="rounded-md border w-[80%] my-1 text-light-font border-gray-300 p-2 focus:outline-none focus:ring-1 focus:ring-base-color">
-
+        <view-password class="absolute right-10 bottom-2 " (visibleChange)="changeVisibility($event)"></view-password>
     </div>
+
     <p class="text-sm mt-4">
         <a href="#" class="text-base-color hover:underline">Esqueceu sua senha?</a>
     </p>
-    
 
-    <button type="submit"
-        class=" bg-base-color p-2 w-[70%] m-auto text-white rounded shadow-lg hover:bg-hover-font">
+
+    <button type="submit" class=" bg-base-color p-2 w-[70%] m-auto text-white rounded shadow-lg hover:bg-hover-font">
         Entrar
     </button>
 
     <p class="text-sm mt-4">
-       É novo aqui? <a routerLink="/register" class="text-base-color hover:underline">cadastre-se</a>
+        É novo aqui? <a routerLink="/register" class="text-base-color hover:underline">cadastre-se</a>
     </p>
-  <div>
-    <ul class="flex justify-center">
-        <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110" src="assets/icons/github.png" alt=""></a></li>
-        <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110" src="assets/icons/google.png" alt=""></a></li>
-        <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110" src="assets/icons/discord.png" alt=""></a></li>
-    </ul>
-  </div>
+    <div>
+        <ul class="flex justify-center">
+            <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110"
+                        src="assets/icons/github.png" alt=""></a></li>
+            <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110"
+                        src="assets/icons/google.png" alt=""></a></li>
+            <li><a href=""><img class="w-[50px] mx-2 transition-all duration-200 hover:scale-110"
+                        src="assets/icons/discord.png" alt=""></a></li>
+        </ul>
+    </div>
 </form>

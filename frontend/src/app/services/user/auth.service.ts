@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../enviroments/enviroment';
 import { HttpClient } from '@angular/common/http';
 import { IResponseAuth } from '../../interfaces/api/response.auth.interface';
-import { tap } from 'rxjs';
+import { delay, tap, timeout } from 'rxjs';
 import { IbodyLogin } from '../../interfaces/api/body.login.interface';
+import { IbodyRegister } from '../../interfaces/api/body.register.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,17 @@ export class AuthService {
     }))
 
   }
-  logout(){
+  register(body: IbodyRegister) {
+    return this.http.post<IResponseAuth>(`${this.apiUrl}/user/register`, body).pipe(
+      delay(3000),
+      tap((response) => {
+        console.log('aqui')
+        localStorage.setItem('auth-token', response.token)
+
+      }))
+
+  }
+  logout() {
     localStorage.removeItem('auth-token')
 
   }
