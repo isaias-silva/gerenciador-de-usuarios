@@ -18,7 +18,7 @@ public class GlobalExceptionHandler {
         ex.getBindingResult().getAllErrors().forEach(error -> {
 
             String errorMessage = error.getDefaultMessage();
-            responseErrorValidator.addErros(errorMessage);
+            responseErrorValidator.addErrors(errorMessage);
         });
         return ResponseEntity.badRequest().body(responseErrorValidator);
     }

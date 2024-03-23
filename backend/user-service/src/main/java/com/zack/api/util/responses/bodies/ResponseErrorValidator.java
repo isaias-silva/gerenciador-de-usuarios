@@ -5,17 +5,17 @@ import java.util.List;
 
 public class ResponseErrorValidator extends Response {
 
-    private final List<String> erros = new ArrayList<>();
+    private final List<String> errors = new ArrayList<>();
 
     public ResponseErrorValidator(String message) {
         super(message);
     }
 
-    public List<String> getErros() {
-        return erros;
+    public List<String> getErrors() {
+        return errors;
     }
 
-    public void addErros(String erro) {
-        this.erros.add(erro);
+    public void addErrors(String error) {
+        this.errors.add(error);
     }
 }

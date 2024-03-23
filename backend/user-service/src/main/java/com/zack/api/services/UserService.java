@@ -14,12 +14,10 @@ import com.zack.api.util.mail.MailTemplate;
 import com.zack.api.util.responses.bodies.Response;
 import com.zack.api.util.responses.bodies.ResponseJwt;
 import com.zack.api.util.responses.bodies.UserData;
-
 import com.zack.api.util.responses.enums.GlobalResponses;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Objects;
+import java.util.Optional;
 
 
 @Service("userService")
@@ -121,7 +120,11 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
             cacheUtils.clearCacheRandom(user.getMail());
 
-            sendMailForQueue(user.getMail(), user.getName(), MailTemplate.EMAIL_VALIDATED, Optional.empty());
+            sendMailForQueue(user.getMail(),
+                    user.getName(),
+                    MailTemplate.EMAIL_VALIDATED,
+                    Optional.empty());
+
             return new Response(GlobalResponses.MAIL_VALIDATED.getText());
         } else {
             throw new ForbiddenException(GlobalResponses.INVALID_CODE.getText());
@@ -240,6 +243,7 @@ public class UserService implements UserDetailsService {
         userProducer.publishMessageMail(emailSendDto);
 
     }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findOneByUsername(username);
