@@ -72,8 +72,8 @@ export class RegisterComponent implements IformUser {
         },
         error: (err: IerrorRegister) => {
           this.load = false
-          if (err.error.erros)
-            this.errors.push(err.error.erros[err.error.erros.length - 1])
+          if (err.error.errors)
+            this.errors.push(err.error.errors[err.error.errors.length - 1])
           else if (err.error.message)
             this.errors.push(err.error.message)
 

@@ -1,1 +1,19 @@
-<p>verify works!</p>
+<form class=" w-[100%] mt-0 h-screen" [formGroup]="form" (ngSubmit)="submit()">
+
+    <div
+        class="w-1/2 rounded-xl m-auto flex flex-col justify-center content-center items-center p-4 bg-invisible-component-color">
+        <h1 class="text-xl text-center">foi solicitado um código de verificação para seu e-mail, digite o código para validar</h1>
+
+        <input class="my-4 w-[40%] mx-2 text-2xl p-2 rounded-md text-gray-700 text-center" type="number"
+            [formControl]="form.controls.code">
+        <span *ngIf="error" class="block text-red-600 bg-red-300 p-2 rounded-lg mt-1 mb-2">{{error}}</span>
+
+        <button type="submit" class="bg-base-color p-2 w-[30%] m-auto text-white rounded shadow-lg hover:bg-hover-font">
+
+
+            <span class="text-xl">verificar</span>
+
+        </button>
+
+    </div>
+</form>

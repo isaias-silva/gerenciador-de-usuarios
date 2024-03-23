@@ -1,6 +1,6 @@
 export interface IerrorRegister {
     error: {
         message?:string
-        erros?: string[]
+        errors?: string[]
     }
 }

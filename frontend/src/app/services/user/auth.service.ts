@@ -27,7 +27,7 @@ export class AuthService {
     return this.http.post<IResponseAuth>(`${this.apiUrl}/user/register`, body).pipe(
       delay(3000),
       tap((response) => {
-        console.log('aqui')
+       
         localStorage.setItem('auth-token', response.token)
 
       }))

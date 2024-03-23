@@ -8,6 +8,7 @@ import { HomeComponent } from './pages/home/home.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { VerifyComponent } from './pages/verify/verify.component';
 import { mailVerifiedGuard } from './guards/mail-verified.guard';
+import { mailNoVerifiedOnlyGuard } from './guards/mail-no-verified-only.guard';
 
 export const routes: Routes = [
     {
@@ -20,9 +21,9 @@ export const routes: Routes = [
         path: '', canActivate: [isLoginGuard],
         component: HomeTemplateComponent,
         children: [
-            { path: '', component: HomeComponent },
-            { path: 'profile', component: ProfileComponent,canActivate:[mailVerifiedGuard] },
-            { path: 'validate', component: VerifyComponent },
+            { path: '', component: HomeComponent, },
+            { path: 'profile', component: ProfileComponent, canActivate: [mailVerifiedGuard] },
+            { path: 'validate', component: VerifyComponent, canActivate: [mailNoVerifiedOnlyGuard] },
         ]
     }
 ];

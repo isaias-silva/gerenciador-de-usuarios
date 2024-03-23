@@ -1,16 +1,22 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
 import { UserService } from '../services/user/user.service';
+import { Observable, catchError, map, of } from 'rxjs';
 
-export const isLoginGuard: CanActivateFn = async (route, state) => {
+export const isLoginGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> => {
   const router = inject(Router)
   const userService = inject(UserService)
 
-  if (!userService.getToken()) {
-    router.navigate(['/login'])
-    return false
-  }
-  return true
+  return userService.me().pipe(
+    map(user=>{
+      return true
+    }),
 
+    catchError(() => {
+      
+      router.navigate(['/login'])
+      return of(false);
+    })
+  )
 
 };
