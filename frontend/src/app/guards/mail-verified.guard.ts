@@ -11,7 +11,8 @@ export const mailVerifiedGuard = (route: ActivatedRouteSnapshot, state: RouterSt
   return userService.me().pipe(map(user => {
 
     if (user.role == 'VERIFY_MAIL') {
-      router.navigate(['/validate'])
+      let word = btoa("valide sua conta para continuar na MediaCodec, um código foi enviado para seu e-mail+valid")
+      router.navigate([`/validate/${word}`])
       return false
     } else {
       return true

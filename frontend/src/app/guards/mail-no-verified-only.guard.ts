@@ -3,19 +3,18 @@ import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } fr
 import { UserService } from '../services/user/user.service';
 import { Observable, map } from 'rxjs';
 
-export const mailNoVerifiedOnlyGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> => {
+export const mailNoVerifiedOnlyGuard = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean => {
   const router = inject(Router)
-  const userService = inject(UserService)
 
 
-  return userService.me().pipe(map(user => {
+  let valid = atob(route.params["message"]).split('+')[1]
+  if (valid && valid == 'valid') {
+    return true
 
-    if (user.role != 'VERIFY_MAIL') {
-      router.navigate(['/'])
-      return false
-    } else {
-      return true
-    }
-  }))
+  } else {
+    alert('no')
+    router.navigate(['/'])
+    return false
+  }
 
 };

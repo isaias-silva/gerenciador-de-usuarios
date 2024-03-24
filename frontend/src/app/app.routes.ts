@@ -23,7 +23,7 @@ export const routes: Routes = [
         children: [
             { path: '', component: HomeComponent, },
             { path: 'profile', component: ProfileComponent, canActivate: [mailVerifiedGuard] },
-            { path: 'validate', component: VerifyComponent, canActivate: [mailNoVerifiedOnlyGuard] },
+            { path: 'validate/:message', component: VerifyComponent, canActivate: [mailNoVerifiedOnlyGuard] },
         ]
     }
 ];

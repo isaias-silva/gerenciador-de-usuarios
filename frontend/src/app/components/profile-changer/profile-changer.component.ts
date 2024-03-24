@@ -23,10 +23,7 @@ if(event.target){
     
     this.preview = URL.createObjectURL(event.target.files[0]);
     this.userService.updateProfile(event.target.files[0]).subscribe({
-      next:(response)=>{
-        
-        alert(response.message)
-      },
+    
     error:(err)=>{
       console.log(err)
     }

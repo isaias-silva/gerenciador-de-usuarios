@@ -3,8 +3,9 @@ import { environment } from '../../enviroments/enviroment';
 import { HttpClient } from '@angular/common/http';
 import { IResponseAuth } from '../../interfaces/api/response.auth.interface';
 import { Iuser } from '../../interfaces/api/user.data.interface';
-import { BehaviorSubject, Observable, catchError, map, of } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, delay, map, of } from 'rxjs';
 import { IupdateUser } from '../../interfaces/api/user.update.interface';
+import { IResponseDefault } from '../../interfaces/api/response.default';
 
 
 @Injectable({
@@ -17,7 +18,6 @@ export class UserService {
 
     constructor(private http: HttpClient) { }
 
-    userSubject: BehaviorSubject<Iuser | null> = new BehaviorSubject<Iuser | null>(null);
 
     me() {
 
@@ -25,14 +25,11 @@ export class UserService {
             .pipe(catchError((err, caught) => {
                 localStorage.removeItem('auth-token')
                 throw err
-            })).pipe(map((v) => {
-                this.userSubject.next(v)
-                return v
             }))
     }
 
     update(doc: IupdateUser) {
-      
+
         return this.http.put<IResponseAuth>(`${this.apiUrl}/user/update`, doc, { headers: { "authorization": `Bearer ${this.getToken()}` } })
 
 
@@ -42,10 +39,21 @@ export class UserService {
 
         formData.append("file", file);
 
-        return this.http.put<IResponseAuth>(`${this.apiUrl}/user/update/profile`, formData, { headers: { "authorization": `Bearer ${this.getToken()}` } })
+        return this.http.put<IResponseDefault>(`${this.apiUrl}/user/update/profile`, formData, { headers: { "authorization": `Bearer ${this.getToken()}` } })
     }
 
-    
+    validate(code: string) {
+
+        return this.http.put<IResponseDefault>(`${this.apiUrl}/user/validate`, { code }, { headers: { "authorization": `Bearer ${this.getToken()}` } }).pipe(delay(5000))
+
+    }
+    sendNewCode() {
+
+        return this.http.get<IResponseDefault>(`${this.apiUrl}/user/send/newCode`, { headers: { "authorization": `Bearer ${this.getToken()}` } })
+
+    }
+
+
     getToken() {
         return localStorage.getItem('auth-token')
 

@@ -8,6 +8,9 @@ import { Iuser } from '../../../interfaces/api/user.data.interface';
 import { ProfileChangerComponent } from "../../profile-changer/profile-changer.component";
 import { IupdateUser } from '../../../interfaces/api/user.update.interface';
 import { UserService } from '../../../services/user/user.service';
+import { InfoComponent } from "../../utils/info/info.component";
+import { Observable, delay, map, of } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
@@ -15,11 +18,12 @@ import { UserService } from '../../../services/user/user.service';
   standalone: true,
   templateUrl: './edit-user-modal.component.html',
   styleUrl: './edit-user-modal.component.css',
-  imports: [MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatDialogModule, ProfileChangerComponent]
+  imports: [MatFormFieldModule, MatInputModule, FormsModule, ReactiveFormsModule, MatDialogModule, ProfileChangerComponent, InfoComponent, CommonModule]
 })
 export class EditUserModalComponent implements OnInit {
   constructor(private matDialogRef: MatDialogRef<EditUserModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Iuser, private userService: UserService) {
+    @Inject(MAT_DIALOG_DATA) public data: Iuser, private userService: UserService,
+  ) {
 
   }
 
@@ -34,6 +38,9 @@ export class EditUserModalComponent implements OnInit {
 
   theme?: string | null
   valid: boolean = false
+
+  message?: { status: 'error' | 'success' | 'info', message: string }|null
+
 
   submit() {
     if (this.form.invalid) {
@@ -50,10 +57,28 @@ export class EditUserModalComponent implements OnInit {
 
 
     this.save(updateObject)
-    console.log(updateObject)
+
 
   }
 
+  showMessage(message: string, status: 'error' | 'info' | 'success') {
+
+    const show = of({ message, status }).pipe(
+
+      map((message) => {
+        this.message = message
+      }),
+
+      delay(4000),
+
+      map(() => {
+        this.message = null
+
+      }
+
+      ))
+      show.subscribe()
+  }
   private compare(key: "name" | "mail" | "githubURL" | "instagramURL" | "portfolioURL" | "resume") {
     if (this.data[key] != this.form.controls[key].value && this.form.controls[key].value) {
       this.valid = true
@@ -64,7 +89,7 @@ export class EditUserModalComponent implements OnInit {
   }
 
   save(updateObject: IupdateUser) {
-    
+
 
     if (!this.valid) {
       return
@@ -72,11 +97,12 @@ export class EditUserModalComponent implements OnInit {
     if (updateObject) {
       this.userService.update(updateObject).subscribe({
         next: (res) => {
-          alert(res.message)
+          this.showMessage(res.message, 'success')
 
         },
         error(err) {
           console.log(err)
+
         }
       })
 

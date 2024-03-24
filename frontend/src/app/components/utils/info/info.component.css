@@ -1,0 +1,20 @@
+.up{
+border-top: 20px solid;
+box-sizing: border-box;
+animation: up-disapear 5s forwards;
+}
+
+@keyframes up-disapear {
+     0%{
+        opacity: 0;
+        margin-bottom: 0px;
+     }
+     50%{
+        opacity: 1;
+        margin-bottom: 40%;
+     }
+     100%{
+        opacity: 0;
+        display: none;
+     }
+}

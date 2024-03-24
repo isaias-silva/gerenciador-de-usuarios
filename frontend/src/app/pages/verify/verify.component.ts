@@ -1,25 +1,67 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { UserService } from '../../services/user/user.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { delay } from 'rxjs';
 
 @Component({
   selector: 'app-verify',
   standalone: true,
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, MatProgressSpinnerModule],
   templateUrl: './verify.component.html',
 
 })
-export class VerifyComponent {
+export class VerifyComponent implements OnInit {
+
+  constructor(private userService: UserService,private router:Router,private route:ActivatedRoute) {
+
+  }
+  ngOnInit(): void {
+  this.message=atob(this.route.snapshot.params["message"]).split('+')[0]
+
+  }
+
   form = new FormGroup({
     code: new FormControl<string | null>(null, [Validators.required])
   })
-  error?:string;
+  load: boolean = false
+  error?: string;
+  message?:string;
+   
 
+  sendNewCode(){
+    this.userService.sendNewCode().subscribe(
+      {
+        next:()=>{
+          location.reload()
+        }
+      }
+    )
+  }
   submit() {
-   this.error=undefined
+    this.error = undefined
+    const { code } = this.form.controls
     if (this.form.invalid) {
-      this.error="digite o código que recebeu por e-mail"
+      this.error = "digite o código que recebeu por e-mail"
       return
+    } else if (code.value) {
+      this.load = true
+      this.userService.validate(code.value).subscribe({
+        next: (res) => {
+          this.load = false
+          this.router.navigate(['/'])
+
+        },
+        error: (err) => {
+          
+          this.error = err.error.message
+       
+          this.load=false
+        }
+      })
+
     }
   }
 }

@@ -1,0 +1,5 @@
+<div
+    [class]="'up ' +'flex  items-center fixed z-40 right-1 bottom-2'+ (status=='success'?' bg-green-100 text-green-600':status=='error'?' bg-red-100 text-red-800':' bg-gray-100 text-gray-800')+' p-3 rounded-md w-[400px]'">
+    <mat-icon>info</mat-icon>
+    <p class="ml-1">{{message}}</p>
+</div>

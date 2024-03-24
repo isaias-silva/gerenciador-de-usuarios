@@ -2,17 +2,27 @@
 
     <div
         class="w-1/2 rounded-xl m-auto flex flex-col justify-center content-center items-center p-4 bg-invisible-component-color">
-        <h1 class="text-xl text-center">foi solicitado um código de verificação para seu e-mail, digite o código para validar</h1>
+        <h1 class="text-xl text-center">{{message || "foi solicitado um código de verificação para seu e-mail, digite o código para validar"}}</h1>
 
-        <input class="my-4 w-[40%] mx-2 text-2xl p-2 rounded-md text-gray-700 text-center" type="number"
+        <input class="my-4 w-[40%] mx-2 text-2xl p-2 rounded-md text-gray-500 text-center" type="number"
             [formControl]="form.controls.code">
         <span *ngIf="error" class="block text-red-600 bg-red-300 p-2 rounded-lg mt-1 mb-2">{{error}}</span>
 
-        <button type="submit" class="bg-base-color p-2 w-[30%] m-auto text-white rounded shadow-lg hover:bg-hover-font">
+        <button type="submit"
+            [class]="load?'bg-gray-800 p-2 w-[30%] m-auto text-white rounded shadow-l':'bg-base-color p-2 w-[30%] m-auto text-white rounded shadow-l hover:bg-hover-font'"
+            [disabled]="load">
 
+            <div class="flex justify-center items-center" *ngIf="load">
 
-            <span class="text-xl">verificar</span>
+                <mat-spinner [diameter]="30"></mat-spinner>
+            </div>
 
+            <span *ngIf="!load" class="text-xl">verificar</span>
+
+        </button>
+        <button type="button" (click)="sendNewCode()"
+            class="my-2 transition-all duration-200 underline hover:text-hover-font">
+            enviar novo código
         </button>
 
     </div>

@@ -40,7 +40,7 @@ export class RegisterComponent implements IformUser {
 
 
   form = new FormGroup({
-    name: new FormControl<string | null>(null, [Validators.required, Validators.min(4), Validators.max(10)]),
+    name: new FormControl<string | null>(null, [Validators.required, Validators.min(4), Validators.max(20)]),
     mail: new FormControl<string | null>(null, [Validators.required, Validators.email]),
     password: new FormControl<string | null>(null, [Validators.required, Validators.pattern(/(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).+$/), Validators.max(12), Validators.min(7)]),
     passwordRepite: new FormControl<string | null>(null, [Validators.required],
@@ -68,7 +68,8 @@ export class RegisterComponent implements IformUser {
       this.authService.register(userRegisterBody).subscribe({
         next: (res) => {
           this.load = false
-          this.router.navigate(['/validate'])
+          let word = btoa("foi enviado um codigo de verificação para seu email, use esse codigo para validar:+valid")
+          this.router.navigate([`/validate/${word}`])
         },
         error: (err: IerrorRegister) => {
           this.load = false
@@ -85,10 +86,10 @@ export class RegisterComponent implements IformUser {
   drawErrors() {
 
 
-    const { mail, password, name, passwordRepite } = this.form.controls;
+    const { mail, password, name} = this.form.controls;
 
     if (name.status == 'INVALID') {
-      this.errors.push("nome inválido! use um nome com no minimo 4 digitos e no máximo 10.")
+      this.errors.push("nome inválido! use um nome com no minimo 4 digitos e no máximo 20.")
       this.errorClasses.forEach(errorClass => this.inputName?.nativeElement.classList.add(errorClass))
 
       return
