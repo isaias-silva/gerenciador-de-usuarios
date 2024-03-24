@@ -42,12 +42,12 @@
 
             <div class="w-1/2">
                 <label class="block text-base-color font-bold mb-2">Sobre:</label>
-                <textarea class="border w-full bg-component-light-color dark:bg-component-dark-color-2 h-32 rounded-lg p-2" [formControl]="form.controls.resume" placeholder="Escreva sobre você"></textarea>
+                <textarea class="border w-full bg-component-light-color dark:bg-component-dark-color-2 resize-none h-32 rounded-lg p-2" [formControl]="form.controls.resume" placeholder="Escreva sobre você"></textarea>
             </div>
 
             <div class="w-full flex justify-center items-center">
-                <button type="submit"
-                        class="w-1/2 bg-base-color text-white font-bold py-2 px-4 rounded hover:bg-hover-font focus:outline-none">Atualizar</button>
+                <button [disabled]="message" type="submit"
+                        [class]="'w-1/2'+ ' font-bold py-2 px-4 rounded'+ (message?' bg-gray-400 text-white':' bg-base-color text-white hover:bg-hover-font focus:outline-none')">{{message?'Atualizando...':'Atualizar'}}</button>
             </div>
         </div>
     </form>

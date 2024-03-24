@@ -15,26 +15,30 @@ import { delay } from 'rxjs';
 })
 export class VerifyComponent implements OnInit {
 
-  constructor(private userService: UserService,private router:Router,private route:ActivatedRoute) {
+  constructor(private userService: UserService, private router: Router, private route: ActivatedRoute) {
 
   }
   ngOnInit(): void {
-  this.message=atob(this.route.snapshot.params["message"]).split('+')[0]
-
+    const stringNormal = atob(this.route.snapshot.params["message"])
+const words=stringNormal.split('+')
+    this.message = words[0]
+    
+    this.opt = words[words.length - 1]=='mchange'?'changemail':'validatemail'
   }
 
   form = new FormGroup({
     code: new FormControl<string | null>(null, [Validators.required])
   })
   load: boolean = false
+  opt: 'changemail' | 'validatemail' = 'validatemail'
   error?: string;
-  message?:string;
-   
+  message?: string;
 
-  sendNewCode(){
+
+  sendNewCode() {
     this.userService.sendNewCode().subscribe(
       {
-        next:()=>{
+        next: () => {
           location.reload()
         }
       }
@@ -48,19 +52,37 @@ export class VerifyComponent implements OnInit {
       return
     } else if (code.value) {
       this.load = true
-      this.userService.validate(code.value).subscribe({
-        next: (res) => {
-          this.load = false
-          this.router.navigate(['/'])
+     
+      if(this.opt=='validatemail'){
 
-        },
-        error: (err) => {
-          
-          this.error = err.error.message
-       
-          this.load=false
-        }
-      })
+        this.userService.validate(code.value).subscribe({
+          next: (res) => {
+            this.load = false
+            this.router.navigate(['/'])
+  
+          },
+          error: (err) => {
+  
+            this.error = err.error.message
+  
+            this.load = false
+          }
+        })
+      }else{
+        this.userService.confirmChangeMail(code.value).subscribe({
+          next: (res) => {
+            this.load = false
+            this.router.navigate(['/'])
+  
+          },
+          error: (err) => {
+  
+            this.error = err.error.message
+  
+            this.load = false
+          }
+        })
+      }
 
     }
   }

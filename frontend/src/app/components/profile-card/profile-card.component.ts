@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { EditUserModalComponent } from '../dialogs/edit-user-modal/edit-user-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-card',
@@ -18,7 +19,7 @@ export class ProfileCardComponent implements OnInit {
 
   userInfo?: Iuser
 
-  constructor(private userService: UserService, public dialog: MatDialog) { }
+  constructor(private userService: UserService, private router: Router, public dialog: MatDialog) { }
 
 
   ngOnInit() {
@@ -40,10 +41,19 @@ export class ProfileCardComponent implements OnInit {
 
       data: this.userInfo
     })
-    openDialog.afterClosed().subscribe((reload: boolean) => {
+    openDialog.afterClosed().subscribe((res: { reload: boolean, isMailChange: boolean }) => {
+      if (res) {
+        const { reload, isMailChange } = res
 
-      if (reload)
-        location.reload()
+        if (isMailChange) {
+          let word = btoa('um codigo de verificação foi enviado para seu novo email. use para valida-lo+valid+mchange')
+          return this.router.navigate([`/validate/${word}`])
+        }
+        if (reload) {
+          return location.reload()
+        }
+      }
+
     })
 
 

@@ -30,7 +30,7 @@ export class UserService {
 
     update(doc: IupdateUser) {
 
-        return this.http.put<IResponseAuth>(`${this.apiUrl}/user/update`, doc, { headers: { "authorization": `Bearer ${this.getToken()}` } })
+        return this.http.put<IResponseDefault>(`${this.apiUrl}/user/update`, doc, { headers: { "authorization": `Bearer ${this.getToken()}` } })
 
 
     }
@@ -45,6 +45,11 @@ export class UserService {
     validate(code: string) {
 
         return this.http.put<IResponseDefault>(`${this.apiUrl}/user/validate`, { code }, { headers: { "authorization": `Bearer ${this.getToken()}` } }).pipe(delay(5000))
+
+    }
+    confirmChangeMail(code: string) {
+
+        return this.http.put<IResponseDefault>(`${this.apiUrl}/user/update/confirm/mail`, { code }, { headers: { "authorization": `Bearer ${this.getToken()}` } }).pipe(delay(8000))
 
     }
     sendNewCode() {

@@ -39,7 +39,7 @@ export class EditUserModalComponent implements OnInit {
   theme?: string | null
   valid: boolean = false
 
-  message?: { status: 'error' | 'success' | 'info', message: string }|null
+  message?: { status: 'error' | 'success' | 'info', message: string } | null
 
 
   submit() {
@@ -67,17 +67,24 @@ export class EditUserModalComponent implements OnInit {
 
       map((message) => {
         this.message = message
+        return message
       }),
 
       delay(4000),
 
-      map(() => {
-        this.message = null
+      map((message) => {
+        if (message.status == 'success') {
+
+          this.matDialogRef.close({ reload: true, isMailChange: this.data.mail != this.form.controls.mail.value })
+        } else {
+          this.message = null
+        }
+
 
       }
 
       ))
-      show.subscribe()
+    show.subscribe()
   }
   private compare(key: "name" | "mail" | "githubURL" | "instagramURL" | "portfolioURL" | "resume") {
     if (this.data[key] != this.form.controls[key].value && this.form.controls[key].value) {
