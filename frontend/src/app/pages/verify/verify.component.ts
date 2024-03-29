@@ -71,7 +71,7 @@ export class VerifyComponent implements OnInit {
       return
     } else if (code.value) {
       this.load = true
-      alert(this.opt)
+      
       if (this.opt == 'validatemail') {
 
         this.userService.validate(code.value).subscribe({
