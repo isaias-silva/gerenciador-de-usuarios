@@ -1,21 +1,22 @@
 <nav class="w-1/5 h-auto py-4  rounded-lg bg-invisible-component-color absolute left-0 top-20 z-20">
     <div class="text-center mb-2">
-        <a routerLink="/profile">
-            <div class="flex w-[100px] h-[100px] m-auto my-2 da border-1 rounded-full overflow-hidden">
+
+            <a routerLink="/profile" class="flex w-[100px] h-[100px] m-auto my-2 da border-1 rounded-full overflow-hidden">
+             
                 <img class="w-full transition-all duration-200 hover:scale-150"
                 [src]="userInfo?.profile|| 'assets/icons/unknown_user.jpg'" alt="unknow_user">
             
-            </div>
-            <h4 class="text-xl transition-all duration-200 hover:text-base-color">{{userInfo?.name}}</h4>
+            </a>
+            <a routerLink="/profile">
+            <h4 class="text-xl transition-all duration-200 hover:text-base-color">{{userInfo?.name}}</h4></a>
             <span class="block transition-all duration-200 text-gray-600 dark:text-gray-200 text-center text-sm">{{userInfo?.mail}}</span>
-        </a>
-
+       
     </div>
 
     <ul class="text-center">
-        <li *ngIf="userInfo?.githubURL"><a target="_blank" [href]="userInfo?.githubURL">Github</a></li>
-        <li *ngIf="userInfo?.portfolioURL"><a target="_blank" [href]="userInfo?.portfolioURL">Website</a></li>
-        <li *ngIf="userInfo?.instagramURL"><a target="_blank" [href]="userInfo?.instagramURL">Instagram</a></li>
+        <li *ngIf="userInfo?.githubURL"><a class=" my-2 font-bold hover:text-hover-font " target="_blank" [href]="userInfo?.githubURL">Github</a></li>
+        <li *ngIf="userInfo?.portfolioURL"><a class=" my-2 font-bold hover:text-hover-font " target="_blank" [href]="userInfo?.portfolioURL">Website</a></li>
+        <li *ngIf="userInfo?.instagramURL"><a class=" my-2 font-bold hover:text-hover-font " target="_blank" [href]="userInfo?.instagramURL">Instagram</a></li>
     </ul>
 
     <hr class="my-2">

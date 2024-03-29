@@ -4,14 +4,14 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { UserService } from '../../services/user/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { delay } from 'rxjs';
+import { delay, map, of } from 'rxjs';
+import { InfoComponent } from "../../components/utils/info/info.component";
 
 @Component({
-  selector: 'app-verify',
-  standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, MatProgressSpinnerModule],
-  templateUrl: './verify.component.html',
-
+    selector: 'app-verify',
+    standalone: true,
+    templateUrl: './verify.component.html',
+    imports: [ReactiveFormsModule, CommonModule, MatProgressSpinnerModule, InfoComponent]
 })
 export class VerifyComponent implements OnInit {
 
@@ -20,10 +20,10 @@ export class VerifyComponent implements OnInit {
   }
   ngOnInit(): void {
     const stringNormal = atob(this.route.snapshot.params["message"])
-const words=stringNormal.split('+')
+    const words = stringNormal.split('+')
     this.message = words[0]
-    
-    this.opt = words[words.length - 1]=='mchange'?'changemail':'validatemail'
+
+    this.opt = words[words.length - 1] == 'mchange' ? 'changemail' : 'validatemail'
   }
 
   form = new FormGroup({
@@ -34,15 +34,34 @@ const words=stringNormal.split('+')
   error?: string;
   message?: string;
 
+  messageDialog?: { status: 'error' | 'success' | 'info', message: string } | null
+
 
   sendNewCode() {
     this.userService.sendNewCode().subscribe(
       {
-        next: () => {
-          location.reload()
+        next: (message) => {
+          this.showModal(message.message, 'info')
         }
       }
     )
+  }
+  showModal(message: string, status: 'error' | 'success' | 'info') {
+    const show = of({ message, status }).pipe(
+
+      map((message) => {
+        this.messageDialog = message
+        return message
+      }),
+
+      delay(4000),
+
+      map((message) => {
+        this.messageDialog = undefined
+      }
+      ))
+
+    show.subscribe()
   }
   submit() {
     this.error = undefined
@@ -52,33 +71,33 @@ const words=stringNormal.split('+')
       return
     } else if (code.value) {
       this.load = true
-     
-      if(this.opt=='validatemail'){
+      alert(this.opt)
+      if (this.opt == 'validatemail') {
 
         this.userService.validate(code.value).subscribe({
           next: (res) => {
             this.load = false
             this.router.navigate(['/'])
-  
+
           },
           error: (err) => {
-  
+
             this.error = err.error.message
-  
+
             this.load = false
           }
         })
-      }else{
+      } else {
         this.userService.confirmChangeMail(code.value).subscribe({
           next: (res) => {
             this.load = false
             this.router.navigate(['/'])
-  
+
           },
           error: (err) => {
-  
+
             this.error = err.error.message
-  
+
             this.load = false
           }
         })

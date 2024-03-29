@@ -17,6 +17,7 @@ services:
       - cache
     volumes:
       - ./uploads:/app/public/files
+      
   db:
     image: mysql:8.0.31
     restart: always

@@ -11,6 +11,7 @@ import { UserService } from '../../../services/user/user.service';
 import { InfoComponent } from "../../utils/info/info.component";
 import { Observable, delay, map, of } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { IerrorRegister } from '../../../interfaces/api/response.error.register';
 
 
 @Component({
@@ -73,12 +74,14 @@ export class EditUserModalComponent implements OnInit {
       delay(4000),
 
       map((message) => {
-        if (message.status == 'success') {
-
-          this.matDialogRef.close({ reload: true, isMailChange: this.data.mail != this.form.controls.mail.value })
-        } else {
-          this.message = null
-        }
+       
+          if(message.status!='error'){
+            this.matDialogRef.close({ reload: true, isMailChange: this.data.mail != this.form.controls.mail.value })
+        
+          }else{
+            this.message=undefined
+          }
+         
 
 
       }
@@ -107,9 +110,13 @@ export class EditUserModalComponent implements OnInit {
           this.showMessage(res.message, 'success')
 
         },
-        error(err) {
+        error:(err:IerrorRegister)=>{
           console.log(err)
-
+          if(err?.error?.errors){
+            this.showMessage(err.error?.errors[0], 'error')
+         
+          }
+         
         }
       })
 
@@ -119,3 +126,5 @@ export class EditUserModalComponent implements OnInit {
     this.theme = localStorage.getItem('theme')
   }
 }
+
+

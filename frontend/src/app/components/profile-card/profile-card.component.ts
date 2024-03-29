@@ -47,6 +47,7 @@ export class ProfileCardComponent implements OnInit {
 
         if (isMailChange) {
           let word = btoa('um codigo de verificação foi enviado para seu novo email. use para valida-lo+valid+mchange')
+      
           return this.router.navigate([`/validate/${word}`])
         }
         if (reload) {
