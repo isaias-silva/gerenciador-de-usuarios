@@ -13,13 +13,11 @@
 - MySQL
 - RabbitMQ
 - Redis
+- Docker
 
 ### Frontend:
 - Angular
 - Typescript
-
-## DevOps:
-- Docker
 
 
 ## Funcionalidades
